@@ -1,3 +1,5 @@
+import java.util.Calendar;
+
 /**
  * <insert description here>
  *
@@ -11,11 +13,11 @@ public class Location {
 	public final double accuracy;
 	public final long time; // epoch timestamp
 
-	public Location(double latitude, double longitude, double accuracy, long time) {
+	public Location(double latitude, double longitude, double accuracy) {
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.accuracy = accuracy;
-		this.time = time;
+        this.time = Calendar.getInstance().getTimeInMillis();
 	}
 
 	public double getLatitude() {

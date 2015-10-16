@@ -7,9 +7,4 @@
  */
 public class Room {
 
-	Location location = serialise((Object) message);
-
-	public Location serialise(Object message) {
-		return null;
-	}
 }
