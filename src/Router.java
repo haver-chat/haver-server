@@ -13,7 +13,6 @@ import java.net.UnknownHostException;
 import java.util.Collection;
 import java.util.HashMap;
 
-// TODO get JSON lib
 // TODO get token lib
 
 public class Router extends WebSocketServer {
@@ -47,8 +46,9 @@ public class Router extends WebSocketServer {
 	}
 
 	@Override
-	public void onClose( WebSocket conn, int code, String reason, boolean remote ) {
-		rooms.get(clients.get(conn)).onClose(conn, message);
+	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+		Client client = clients.get(conn);
+		rooms.get(client).onClose(client, code, reason, remote);
 	}
 
 	@Override
@@ -62,7 +62,7 @@ public class Router extends WebSocketServer {
 		} catch(ParseException e) {
 			// TODO Client gave me bad JSON, wut do? =(
 		}
-		switch(jsonObject.get(KEY_TYPE)) {
+		switch((int) jsonObject.get(KEY_TYPE)) {
 			case TYPE_LOCATION:
 				if (room != null) {
 					room.updateLocation(client, new Location(jsonObject));
@@ -109,9 +109,9 @@ public class Router extends WebSocketServer {
 
     public static void main(String[] args) throws Exception {
         WebSocketImpl.DEBUG = true;
-        Router router = new Router(8080);
+        Router router = new Router();
         router.start();
-        SocClient client = new SocClient(new URI("ws://127.0.0.1:8080/"));
+        SocClient client = new SocClient(new URI("ws://127.0.0.1:" + PORT + "/"));
         client.connect();
     }
 }

@@ -23,10 +23,9 @@ public class Location {
 	}
 
 	public Location (JSONObject jsonObject) {
-		this.latitude = (double) jsonObject.get("latitude");
-		this.longitude = (double) jsonObject.get("longitude");
-		this.accuracy = (double) jsonObject.get("accuracy");
-		this.time = Calendar.getInstance().getTimeInMillis();
+		this((double) jsonObject.get("latitude"),
+			(double) jsonObject.get("longitude"),
+			(double) jsonObject.get("accuracy"));
 	}
 
 	public double getLatitude() {

@@ -12,6 +12,13 @@ public class Message {
         this.content = content;
     }
 
+	// TODO Decide whether or not to replace second constructor and toJSON by making Message extend JSONObject,
+	// keeping the internal data structure as JSON and just providing accessor methods.
+	public Message(JSONObject jsonObject) {
+		this((Client) jsonObject.get("client"),
+			(String) jsonObject.get("content"));
+	}
+
     public String toJSON() {
         JSONObject obj = new JSONObject();
         obj.put("user", client.getId());
