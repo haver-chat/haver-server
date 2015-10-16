@@ -1,5 +1,4 @@
 import org.java_websocket.WebSocket;
-import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.json.simple.JSONObject;
@@ -8,7 +7,6 @@ import org.json.simple.parser.ParseException;
 
 import java.lang.Override;
 import java.net.InetSocketAddress;
-import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
@@ -16,9 +14,12 @@ import java.util.HashMap;
 
 public class Router extends WebSocketServer {
 
+	private final static int TYPE_ROOM_INFO = -1;
 	private final static int TYPE_LOCATION = 0;
-	private final static int TYPE_MESSAGE = 1;
-	private final static int TYPE_ROOM_INFO = 2;
+	private final static int TYPE_POST = 1;
+	private final static String ROOM_INFO_REQUEST = "{\"type\":" + TYPE_ROOM_INFO + '}';
+	private final static String LOCATION_REQUEST = "{\"type\":" + TYPE_LOCATION + '}';
+	private final static String POST_REQUEST = "{\"type\":" + TYPE_POST + '}';
 
 	private final static JSONParser parser = new JSONParser();
     private final static String HOSTNAME = "localhost";
@@ -32,8 +33,9 @@ public class Router extends WebSocketServer {
 
 	@Override
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
-		clients.put(conn, new Client(generateID(conn), generateToken(conn)));
-        System.out.println("New connection: " + conn);
+		Client client = new Client(generateID(conn), generateToken(conn));
+		clients.put(conn, client);
+        System.out.println("New connection: " + client.getId());
 	}
 
 	@Override
@@ -44,31 +46,38 @@ public class Router extends WebSocketServer {
             rooms.get(client).close(client);
             rooms.remove(client);
         }
-        System.out.println("Connection closed: " + conn);
+        System.out.println("Connection closed: " + client.getId());
 	}
 
 	@Override
 	public void onMessage(WebSocket conn, String message) {
-        System.out.println("Message from [" + conn + ": " + message);
-
 		Client client = clients.get(conn);
 		Room room = rooms.get(client);
-		JSONObject jsonObject = null; // TODO init to null?
+		System.out.println("Message from [" + client.getId() + ": " + message);
 
 		try {
-			jsonObject = (JSONObject) parser.parse(message);
+			JSONObject jsonObject = (JSONObject) parser.parse(message);
 			int type = (int) jsonObject.get(Location.KEY_TYPE);
 
 			if(room != null) {
 				switch (type) {
 					case TYPE_LOCATION:
-						room.updateLocation(client, new Location(jsonObject));
+						if (room.inRange(client.getLocation())) {
+							room.updateLocation(client, new Location(jsonObject));
+						} else {
+							room.close(client);
+							Location location = new Location(jsonObject);
+							client.setLocation(location);
+							rooms.replace(client, getRoom(location));
+						}
 						break;
-					case TYPE_MESSAGE:
+
+					case TYPE_POST:
 						room.broadcast(new Post(jsonObject));
 						break;
+
 					default:
-						// TODO DUN GOOF'D
+						// Client dun goof'd
 						break;
 				}
 			} else {
@@ -76,26 +85,48 @@ public class Router extends WebSocketServer {
 					case TYPE_LOCATION:
 						Location location = new Location(jsonObject);
 						client.setLocation(location);
-						rooms.replace(client, getRoom(location));
+						room = getRoom(location);
+						if(room != null) {
+							setRoom(conn, client, room);
+						} else {
+							conn.send(ROOM_INFO_REQUEST);
+						}
 						break;
+
 					case TYPE_ROOM_INFO:
 						if(client.getLocation() != null) {
 							RoomInfo roomInfo = new RoomInfo(jsonObject);
 							room = new Room(roomInfo, client.getLocation());
-							rooms.replace(client, room);
-							room.addClient(conn, client);
+							setRoom(conn, client, room);
 						} else {
-							// Client has given room information but no location beforehand
+							// Client dun goof'd
+							conn.send(LOCATION_REQUEST);
 						}
 						break;
+
 					default:
-						// TODO DUN GOOF'D
+						// Client dun goof'd
+						conn.send(LOCATION_REQUEST);
 						break;
 				}
 			}
 		} catch(ParseException e) {
-			// TODO Client gave me bad JSON, wut do? =(
+			// Client dun goof'd
+			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Helper method that deals with showing a client to their specified room.
+	 *
+	 * @param conn The WebSocket of the client.
+	 * @param client The client that needs to be put in a room.
+	 * @param room The room that the client needs to be put in.
+	 */
+	private void setRoom(WebSocket conn, Client client, Room room) {
+		rooms.replace(client, room);
+		room.addClient(conn, client);
+		conn.send(POST_REQUEST); // Receipt of a Post request tells the Client it has been allocated to a valid room
 	}
 
 	@Override
@@ -104,10 +135,6 @@ public class Router extends WebSocketServer {
 		if (conn != null) {
 			// some errors like port binding failed may not be assignable to a specific websocket
 		}
-	}
-
-	public static JSONObject serialise(String message) {
-		return null;
 	}
 
 	//TODO Generate IDs

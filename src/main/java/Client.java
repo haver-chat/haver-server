@@ -21,7 +21,7 @@ public class Client {
 
 	public Client(String id, Object token) {
 		this.id = id;
-		location = new Location(0d, 0d, 0);
+		location = new Location(0d, 0d, 0d);
 		this.token = token;
 	}
 
