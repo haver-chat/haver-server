@@ -1,3 +1,4 @@
+// TODO Check lat/long/acc isn't 0/0/0
 var Position = function() {
   var _this = this;
   this.longitude = 0;
