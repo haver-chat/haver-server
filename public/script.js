@@ -19,7 +19,7 @@ var Position = function() {
   }
   
   this.hasPosition = function() {
-    return ~accuracy;
+    return ~_this.accuracy;
   }
   
   // setup:
@@ -36,23 +36,27 @@ var Socket = function() {
   
   this.connect = function() {
     var protocol = location.protocol.split('http').join('ws') + '//';
-    _this.socket = new WebSocket(protocol + location.host + ':8080');
+    //_this.socket = new WebSocket(protocol + location.host + ':8080');
+    _this.socket = new WebSocket('ws://127.0.0.1:8080');
     
     _this.socket.onopen = function() {
       var pos = null;
-      do {
-        pos = new Position();
-      } while (!pos.hasPosition());
-      this.send();
+      pos = new Position();
+      _this.send(_this.types.LOCATION, pos);
     }
     
     _this.socket.onclose = function() {
       _this.reconnect();
     }
     
+    _this.socket.onmessage = function(data) {
+      console.log(data);
+    }
+    
     this.send = function(type, data) {
       data['type'] = type;
-      _this.socket.send(JSON.stringify(data));
+      console.log(JSON.stringify(data));
+      //_this.socket.send(JSON.stringify(data));
     }
     
   }
@@ -62,43 +66,6 @@ var Socket = function() {
   }
 }
 
-/*
-var map;
-var pos = new Position();
-function initMap() {
-  var coords = {lat: pos.latitude, lng: pos.longitude}
-  map = new google.maps.Map(document.querySelector("#map"), {
-    center: coords,
-    zoom: 16  
-  });
-  var marker = new google.maps.Marker({
-    position: coords,
-    map: map,
-    title: 'Hello World!'
-  });
-  var accuracyRadius = new google.maps.Circle({
-    strokeColor: '#FF0000',
-    strokeOpacity: 0.5,
-    strokeWeight: 2,
-    map: map,
-    center: coords,
-    radius: pos.accuracy
-  });
-  document.querySelector("#map").style.height = window.innerHeight + "px";
-  console.log("Latitude: " + pos.latitude);
-  console.log("Longitude: " + pos.longitude);
-}
 
-
-function getCurrentPosition(callback) {
-  // find data
-  var data = { 'whatever': 0 };
-  callback(data);
-}
-
-var whatever = function(pos) {
-  console.log(JSON.stringify(pos));
-}
-
-getCurrentPosition(whatever);
-*/
+var soc = new Socket();
+soc.connect();

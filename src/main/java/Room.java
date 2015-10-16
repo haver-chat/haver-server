@@ -42,13 +42,10 @@ public class Room {
 	 * Handler method for connection close.
 	 *
 	 * @param client The client whose connection has closed.
-	 * @param code
-	 * @param reason
-	 * @param remote
 	 */
-	public void onClose(Client client, int code, String reason, boolean remote) {
-		broadcast(new Post(client, "Some message saying a client has d/c'ed"));
+	public void close(Client client) {
 		clients.remove(client);
+		broadcast(new Post(client, "Some message saying a client has d/c'ed"));
 	}
 
 	/**

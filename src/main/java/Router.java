@@ -21,29 +21,36 @@ public class Router extends WebSocketServer {
 	private final static int TYPE_ROOM_INFO = 2;
 
 	private final static JSONParser parser = new JSONParser();
+    private final static String HOSTNAME = "localhost";
 	private final static int PORT = 8080;
 	private HashMap<WebSocket, Client> clients = new HashMap<>();
 	private HashMap<Client, Room> rooms = new HashMap<>();
 
 	public Router() throws UnknownHostException {
-		super(new InetSocketAddress(PORT));
+		super(new InetSocketAddress(HOSTNAME, PORT));
 	}
 
 	@Override
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
 		clients.put(conn, new Client(generateID(conn), generateToken(conn)));
+        System.out.println("New connection: " + conn);
 	}
 
 	@Override
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
 		Client client = clients.get(conn);
-		rooms.get(client).onClose(client, code, reason, remote);
 		clients.remove(conn);
-		rooms.remove(client);
+        if (rooms.get(client) != null) {
+            rooms.get(client).close(client);
+            rooms.remove(client);
+        }
+        System.out.println("Connection closed: " + conn);
 	}
 
 	@Override
 	public void onMessage(WebSocket conn, String message) {
+        System.out.println("Message from [" + conn + ": " + message);
+
 		Client client = clients.get(conn);
 		Room room = rooms.get(client);
 		JSONObject jsonObject = null; // TODO init to null?
@@ -139,11 +146,13 @@ public class Router extends WebSocketServer {
 		}
 	}
 
-    public static void main(String[] args) throws Exception {
-        WebSocketImpl.DEBUG = true;
-        Router router = new Router();
-        router.start();
-        SocClient client = new SocClient(new URI("ws://127.0.0.1:" + PORT + "/"));
-        client.connect();
+    public static void main(String[] args) {
+        try {
+            Router router = new Router();
+            router.start();
+            System.out.println("Hosting new server on: " + router.getAddress());
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
     }
 }
