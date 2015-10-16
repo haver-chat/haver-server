@@ -3,23 +3,26 @@ import org.java_websocket.WebSocket;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-/**
- * <insert description here>
- *
- * @author Edward Knight (<a href="http://www.edwardknig.ht/">website</a>, <a href="mailto:edw@rdknig.ht">email</a>)
- * @version 0.1
- * @since 1.8
- */
 public class Room {
 	private String name;
 	private Location centre;
 	private double radius;
 	private HashMap<WebSocket, Client> clients;
 
-	public Room(String name, Location centre, float radius) {
+	public Room(String name, Location centre, double radius) {
 		this.name = name;
 		this.centre = centre;
 		this.radius = radius;
+	}
+
+	/**
+	 * Helper method to check whether or not the specified location is within the range of the room.
+	 *
+	 * @param location The specified location.
+	 * @return True if the specified locaiton is within the radius of the room.
+	 */
+	public boolean inRange(Location location) {
+		return centre.distanceBetween(location) <= radius;
 	}
 
 	public void onClose(Client client, int code, String reason, boolean remote) {

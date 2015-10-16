@@ -2,13 +2,6 @@ import org.json.simple.JSONObject;
 
 import java.util.Calendar;
 
-/**
- * <insert description here>
- *
- * @author Edward Knight (<a href="http://www.edwardknig.ht/">website</a>, <a href="mailto:edw@rdknig.ht">email</a>)
- * @version 0.1
- * @since 1.8
- */
 public class Location {
 
 	public final static String KEY_TYPE = "type";
@@ -32,6 +25,17 @@ public class Location {
 		this((double) jsonObject.get(KEY_LATITUDE),
 			(double) jsonObject.get(KEY_LONGITUDE),
 			(double) jsonObject.get(KEY_ACCURACY));
+	}
+
+	/**
+	 * Helper method for finding the distance between two locations.
+	 * Currently ignores accuracy
+	 * @param location
+	 * @return The distance between two locations.
+	 */
+	public double distanceBetween(Location location) {
+		return Math.sqrt(Math.pow(Math.abs(this.latitude - location.getLatitude()), 2) +
+			Math.pow(Math.abs(this.longitude - location.getLongitude()), 2));
 	}
 
 	public double getLatitude() {return latitude;}

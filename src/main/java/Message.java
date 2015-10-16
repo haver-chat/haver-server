@@ -1,8 +1,5 @@
 import org.json.simple.JSONObject;
 
-/**
- * Created by azertify on 16/10/15.
- */
 public class Message {
 
 	public final static String KEY_CLIENT = "client";
