@@ -10,7 +10,6 @@ import java.lang.Override;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
-import java.util.Collection;
 import java.util.HashMap;
 
 // TODO get token lib
@@ -48,30 +47,31 @@ public class Router extends WebSocketServer {
 
 		try {
 			jsonObject = (JSONObject) parser.parse(message);
+
+			switch((int) jsonObject.get(Location.KEY_TYPE)) {
+				case TYPE_LOCATION:
+					if (room != null) {
+						room.updateLocation(client, new Location(jsonObject));
+					} else {
+						// Give the client a room
+						room = null;
+						// Add to the rooms hashmap
+						rooms.put(client, room);
+						room.addClient(conn, client);
+					}
+					break;
+
+				case TYPE_MESSAGE:
+					if (room != null) {
+						room.broadcast(new Message(jsonObject));
+					} else {
+						// Client has dun-goofed and sent a message when it isn't in a room
+						// TODO Decide what to do here. Ignore?
+					}
+					break;
+			}
 		} catch(ParseException e) {
 			// TODO Client gave me bad JSON, wut do? =(
-		}
-		switch((int) jsonObject.get(Location.KEY_TYPE)) {
-			case TYPE_LOCATION:
-				if (room != null) {
-					room.updateLocation(client, new Location(jsonObject));
-				} else {
-					// Give the client a room
-					room = null;
-					// Add to the rooms hashmap
-					rooms.put(client, room);
-					room.addClient(conn, client);
-				}
-				break;
-
-			case TYPE_MESSAGE:
-				if (room != null) {
-					room.broadcast(client, new Message(jsonObject));
-				} else {
-					// Client has dun-goofed and sent a message when it isn't in a room
-					// TODO Decide what to do here. Ignore?
-				}
-				break;
 		}
 	}
 
@@ -97,12 +97,13 @@ public class Router extends WebSocketServer {
 		return null;
 	}
 
-	public void sendToAll( String text ) {
-		Collection<WebSocket> con = connections();
-		synchronized ( con ) {
-			for( WebSocket c : con ) {
-				c.send( text );
-			}
+	/**
+	 * Sends the specified Message to every Client
+	 * @param message The message to send
+	 */
+	public void broadcast(Message message) {
+		for(Room room : rooms.values()) {
+			room.broadcast(message);
 		}
 	}
 
