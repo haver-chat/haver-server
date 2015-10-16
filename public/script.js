@@ -29,8 +29,12 @@ var Position = function() {
 var Socket = function() {
   var _this = this;
   this.socket = null;
+  this.types = {
+    LOCATION: 0,
+    MESSAGE: 1
+  };
   
-  var connect = function() {
+  this.connect = function() {
     var protocol = location.protocol.split('http').join('ws') + '//';
     _this.socket = new WebSocket(protocol + location.host + ':8080');
     
@@ -39,20 +43,21 @@ var Socket = function() {
       do {
         pos = new Position();
       } while (!pos.hasPosition());
-      this.send(JSON.stringify(pos));
+      this.send();
     }
     
     _this.socket.onclose = function() {
       _this.reconnect();
     }
     
-    this.send = function(data) {
-      _this.socket.send(data);
+    this.send = function(type, data) {
+      data['type'] = type;
+      _this.socket.send(JSON.stringify(data));
     }
     
   }
   
-  var reconnect = function() {
+  this.reconnect = function() {
     
   }
 }
