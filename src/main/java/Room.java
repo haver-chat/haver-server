@@ -49,7 +49,8 @@ public class Room {
 	}
 
 	/**
-	 *
+	 * Helper method used to recalculate the centre of the room when a client updates its location.
+	 * Averages all the clients' locations.
 	 * Accuracy is ignored.
 	 *
 	 * @param oldLocation
@@ -58,19 +59,18 @@ public class Room {
 	private Location recalculateCentre(Location oldLocation, Location updatedLocation) {
 		updatedLocation = recalculateCentre(updatedLocation);
 		return new Location(updatedLocation.getLatitude() - (oldLocation.getLatitude() / clients.size()),
-			updatedLocation.getLongitude() - (oldLocation.getLongitude() / clients.size()),
-			Double.MAX_VALUE);
+			updatedLocation.getLongitude() - (oldLocation.getLongitude() / clients.size()));
 	}
 
 	/**
-	 *
+	 * Helper method used to recalculate the centre of the room when a new client is added.
+	 * Averages all the clients' locations.
 	 * Accuracy is ignored.
 	 *
 	 * @param newLocation
 	 */
     private Location recalculateCentre(Location newLocation) {
 		return new Location(centre.getLatitude() + (newLocation.getLatitude() / clients.size()),
-			centre.getLongitude() + (newLocation.getLongitude() / clients.size()),
-			Double.MAX_VALUE);
+			centre.getLongitude() + (newLocation.getLongitude() / clients.size()));
     }
 }

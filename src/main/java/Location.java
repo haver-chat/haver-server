@@ -21,6 +21,13 @@ public class Location {
         this.time = Calendar.getInstance().getTimeInMillis();
 	}
 
+	public Location(double latitude, double longitude) {
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.accuracy = 0d;
+		this.time = Calendar.getInstance().getTimeInMillis();
+	}
+
 	public Location (JSONObject jsonObject) {
 		this((double) jsonObject.get(KEY_LATITUDE),
 			(double) jsonObject.get(KEY_LONGITUDE),
