@@ -36,12 +36,17 @@ public class Room {
 
 	public void addClient(WebSocket conn, Client client) {
 		clients.put(conn, client);
+        recalculateCentre();
 	}
 
 	public void updateLocation(Client client, Location location) {
 		if (client.isValid()) {
 			client.setLocation(location);
 		}
-		// recalculate centre
+        recalculateCentre();
 	}
+
+    private void recalculateCentre() {
+
+    }
 }
