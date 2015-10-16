@@ -6,8 +6,5 @@
  * @since 1.8
  */
 public class Client {
-	public final String id;
-	public final Location location;
-	private TYPE token;
 
 }
