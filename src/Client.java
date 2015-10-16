@@ -6,5 +6,30 @@
  * @since 1.8
  */
 public class Client {
+	private final String id;
 
+	public void setLocation(Location location) {
+		this.location = location;
+	}
+
+	public Location getLocation() {
+		return location;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public Object getToken() {
+		return token;
+	}
+
+	private Location location;
+	private final  Object token;
+
+	public Client(String id, Object token) {
+		this.id = id;
+		location = new Location(0d, 0d, 0, 0);
+		this.token = token;
+	}
 }

@@ -1,4 +1,3 @@
-
 import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
@@ -9,28 +8,34 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.net.UnknownHostException;
 import java.util.Collection;
+import java.util.HashMap;
 
-/**
- * <insert description here>
- *
- * @author Edward Knight (<a href="http://www.pornhub.com/">website</a>, <a href="mailto:edw@rdknig.ht">email</a>)
- * @version 0.1
- * @since 1.8
- */
+// TODO get JSON lib
+// TODO get token lib
+
 public class Router extends WebSocketServer {
-	public Router( int port ) throws UnknownHostException {
-		super( new InetSocketAddress( port ) );
-	}
 
-	public Router( InetSocketAddress address ) {
-		super( address );
+	private final static int PORT = 8080;
+	private HashMap<WebSocket, Client> clients = new HashMap<>();
+	private HashMap<Client, Room> rooms = new HashMap<>();
+
+	public Router() throws UnknownHostException {
+		super(new InetSocketAddress(PORT));
 	}
 
 	@Override
-	public void onOpen( WebSocket conn, ClientHandshake handshake ) {
-        System.out.println("OHAI:::: " + handshake.getResourceDescriptor());
-		this.sendToAll( "new connection: " + handshake.getResourceDescriptor() );
-		System.out.println( conn.getRemoteSocketAddress().getAddress().getHostAddress() + " entered the room!" );
+	public void onOpen(WebSocket conn, ClientHandshake handshake) {
+		clients.put(conn, new Client(generateID(conn), generateToken(conn)));
+	}
+
+	//TODO Generate IDs
+	private String generateID(WebSocket conn) {
+		return null;
+	}
+
+	//TODO Generate tokens
+	private Object generateToken(WebSocket conn) {
+		return null;
 	}
 
 	@Override
@@ -41,8 +46,9 @@ public class Router extends WebSocketServer {
 
 	@Override
 	public void onMessage( WebSocket conn, String message ) {
-		this.sendToAll( message );
-		System.out.println( conn + ": " + message );
+		rooms.get(clients.get(conn)).onMessage(conn, message);
+
+
 	}
 
 	@Override
