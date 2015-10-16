@@ -1,3 +1,5 @@
+import org.json.simple.JSONObject;
+
 import java.util.Calendar;
 
 /**
@@ -18,6 +20,14 @@ public class Location {
 		this.longitude = longitude;
 		this.accuracy = accuracy;
         this.time = Calendar.getInstance().getTimeInMillis();
+	}
+
+	public static Location fromJSON(JSONObject jsonObject) {
+		return new Location(
+				(double) jsonObject.get("latitude"),
+				(double) jsonObject.get("longitude"),
+				(double) jsonObject.get("accuracy")
+		);
 	}
 
 	public double getLatitude() {
