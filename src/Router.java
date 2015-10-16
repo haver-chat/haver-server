@@ -2,6 +2,9 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.WebSocketImpl;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 import java.lang.Override;
 import java.net.InetSocketAddress;
@@ -15,6 +18,11 @@ import java.util.HashMap;
 
 public class Router extends WebSocketServer {
 
+	private final static String KEY_TYPE = "type";
+	private final static int TYPE_LOCATION = 0;
+	private final static int TYPE_MESSAGE = 1;
+
+	private final static JSONParser parser = new JSONParser();
 	private final static int PORT = 8080;
 	private HashMap<WebSocket, Client> clients = new HashMap<>();
 	private HashMap<Client, Room> rooms = new HashMap<>();
@@ -40,15 +48,46 @@ public class Router extends WebSocketServer {
 
 	@Override
 	public void onClose( WebSocket conn, int code, String reason, boolean remote ) {
-		this.sendToAll( conn + " has left the room!" );
-		System.out.println( conn + " has left the room!" );
+		rooms.get(clients.get(conn)).onClose(conn, message);
 	}
 
 	@Override
-	public void onMessage( WebSocket conn, String message ) {
-		rooms.get(clients.get(conn)).onMessage(conn, message);
+	public void onMessage( WebSocket conn, String message) {
+		Client client = clients.get(conn);
+		Room room =rooms.get(client);
+		JSONObject jsonObject = null; // TODO init to null?
 
+		try {
+			jsonObject = (JSONObject) parser.parse(message);
+		} catch(ParseException e) {
+			// TODO Client gave me bad JSON, wut do? =(
+		}
+		switch(jsonObject.get(KEY_TYPE)) {
+			case TYPE_LOCATION:
+				if (room != null) {
+					room.updateLocation(client, new Location(jsonObject));
+				} else {
+					// Give the client a room
+					room = null;
+					// Add to the rooms hashmap
+					rooms.put(client, room);
+					room.addClient(client);
+				}
+				break;
 
+			case TYPE_MESSAGE:
+				if (room != null) {
+					room.broadcast(client, new Message(jsonObject));
+				} else {
+					// Client has dun-goofed and sent a message when it isn't in a room
+					// TODO Decide what to do here. Ignore?
+				}
+				break;
+		}
+	}
+
+	public static JSONObject serialise(String message) {
+		return null;
 	}
 
 	@Override

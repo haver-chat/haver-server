@@ -9,3 +9,5 @@ out/
 build/
 gradle/
 .jar
+gradlew
+gradlew.bat
