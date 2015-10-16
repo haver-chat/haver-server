@@ -1,6 +1,5 @@
 import org.java_websocket.WebSocket;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Room {
@@ -36,17 +35,42 @@ public class Room {
 
 	public void addClient(WebSocket conn, Client client) {
 		clients.put(conn, client);
-        recalculateCentre();
+        centre = recalculateCentre(client.getLocation());
 	}
 
 	public void updateLocation(Client client, Location location) {
 		if (client.isValid()) {
+			Location oldLocation = client.getLocation();
 			client.setLocation(location);
+			centre = recalculateCentre(oldLocation, location);
+		} else {
+			// TODO Client is giving location update to wrong room, what do?
 		}
-        recalculateCentre();
 	}
 
-    private void recalculateCentre() {
+	/**
+	 *
+	 * Accuracy is ignored.
+	 *
+	 * @param oldLocation
+	 * @param updatedLocation
+	 */
+	private Location recalculateCentre(Location oldLocation, Location updatedLocation) {
+		updatedLocation = recalculateCentre(updatedLocation);
+		return new Location(updatedLocation.getLatitude() - (oldLocation.getLatitude() / clients.size()),
+			updatedLocation.getLongitude() - (oldLocation.getLongitude() / clients.size()),
+			Double.MAX_VALUE);
+	}
 
+	/**
+	 *
+	 * Accuracy is ignored.
+	 *
+	 * @param newLocation
+	 */
+    private Location recalculateCentre(Location newLocation) {
+		return new Location(centre.getLatitude() + (newLocation.getLatitude() / clients.size()),
+			centre.getLongitude() + (newLocation.getLongitude() / clients.size()),
+			Double.MAX_VALUE);
     }
 }
