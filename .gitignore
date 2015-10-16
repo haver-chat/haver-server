@@ -7,3 +7,5 @@ Desktop.ini
 .gradle/
 out/
 build/
+gradle/
+.jar
