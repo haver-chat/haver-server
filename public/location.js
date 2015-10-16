@@ -26,7 +26,7 @@ var Position = function() {
   this.reqPosition();
 }
 
-var map;
+/*var map;
 var pos = new Position();
 function initMap() {
   var coords = {lat: pos.latitude, lng: pos.longitude}
@@ -61,6 +61,6 @@ function getCurrentPosition(callback) {
 
 var whatever = function(pos) {
   console.log(JSON.stringify(pos));
-}
+}*/
 
 getCurrentPosition(whatever);
