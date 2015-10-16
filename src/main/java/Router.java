@@ -27,7 +27,6 @@ public class Router extends WebSocketServer {
 
 	public Router() throws UnknownHostException {
 		super(new InetSocketAddress(PORT));
-		new Thread()
 	}
 
 	@Override
