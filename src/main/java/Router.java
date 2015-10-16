@@ -10,8 +10,11 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 
-// TODO get token lib
+// TODO Get token lib
 
+/**
+ * WebSocketServer that puts Clients into Rooms and routes Messages from the Client to the Room.
+ */
 public class Router extends WebSocketServer {
 
 	private final static int TYPE_ROOM_INFO = -1;
@@ -27,13 +30,17 @@ public class Router extends WebSocketServer {
 	private HashMap<WebSocket, Client> clients = new HashMap<>();
 	private HashMap<Client, Room> rooms = new HashMap<>();
 
+
+	/**
+	 * @throws UnknownHostException Config dun goof'd.
+	 */
 	public Router() throws UnknownHostException {
 		super(new InetSocketAddress(HOSTNAME, PORT));
 	}
 
 	@Override
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
-		Client client = new Client(generateID(conn), generateToken(conn));
+		Client client = new Client();
 		clients.put(conn, client);
         System.out.println("New connection: " + client.getId());
 	}
@@ -49,6 +56,20 @@ public class Router extends WebSocketServer {
         System.out.println("Connection closed: " + client.getId());
 	}
 
+	@Override
+	public void onError(WebSocket conn, Exception ex) {
+		ex.printStackTrace();
+		if (conn != null) {
+			// some errors like port binding failed may not be assignable to a specific websocket
+		}
+	}
+
+	/**
+	 * Accepts Stringified JSON of Messages and routes them accordingly.
+	 *
+	 * @param conn The WebSocket the Message was recieved on.
+	 * @param message The Stringified JSON Message.
+	 */
 	@Override
 	public void onMessage(WebSocket conn, String message) {
 		Client client = clients.get(conn);
@@ -129,24 +150,6 @@ public class Router extends WebSocketServer {
 		conn.send(POST_REQUEST); // Receipt of a Post request tells the Client it has been allocated to a valid room
 	}
 
-	@Override
-	public void onError(WebSocket conn, Exception ex) {
-		ex.printStackTrace();
-		if (conn != null) {
-			// some errors like port binding failed may not be assignable to a specific websocket
-		}
-	}
-
-	//TODO Generate IDs
-	private String generateID(WebSocket conn) {
-		return null;
-	}
-
-	//TODO Generate tokens
-	private Object generateToken(WebSocket conn) {
-		return null;
-	}
-
 	public Room getRoom(Location location) {
 		double closest = -1d;
 		Room result = null;
@@ -165,7 +168,7 @@ public class Router extends WebSocketServer {
 
 	/**
 	 * Sends the specified message to every Client
-	 * @param post The message to send
+	 * @param post The Post to send
 	 */
 	public void broadcast(Post post) {
 		for(Room room : rooms.values()) {

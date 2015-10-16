@@ -8,13 +8,12 @@ public class Post extends Message {
     private final Client client;
     private final String content;
 
+
     public Post(Client client, String content) {
         this.client = client;
         this.content = content;
     }
 
-	// TODO Decide whether or not to replace second constructor and toJSON by making Post extend JSONObject,
-	// keeping the internal data structure as JSON and just providing accessor methods.
 	public Post(JSONObject jsonObject) {
 		this((Client) jsonObject.get(KEY_CLIENT),
 			(String) jsonObject.get(KEY_CONTENT));

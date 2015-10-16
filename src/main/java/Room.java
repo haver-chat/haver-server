@@ -1,6 +1,9 @@
 import org.java_websocket.WebSocket;
 import java.util.HashMap;
 
+/**
+ * A location-based chat room.
+ */
 public class Room {
 	private String name;
 	private Location centre;
@@ -8,8 +11,6 @@ public class Room {
 	private HashMap<WebSocket, Client> clients = new HashMap<>();
 
 	/**
-	 * A location-based chat room.
-	 *
 	 * @param name The human-readable name of where the centre is.
 	 * @param centre The Location of the centre of the Room.
 	 * @param radius The distance in which a Client can join the Room.
@@ -17,25 +18,22 @@ public class Room {
 	public Room(String name, Location centre, double radius) {
 		this.name = name;
 		this.centre = centre;
-		this.radius = radius; // Change as more people are added?
+		this.radius = radius; // TODO Change as more people are added?
 	}
 
 	public Room(RoomInfo roomInfo, Location centre) {
 		this(roomInfo.getName(), centre, roomInfo.getRadius());
 	}
 
-	public Location getCentre() {
-		return centre;
-	}
-
 	/**
-	 * Helper method to check whether or not the specified location is within the range of the room.
+	 * Adds a specified Client to the Room.
 	 *
-	 * @param location The specified location.
-	 * @return True if the specified locaiton is within the radius of the room.
+	 * @param conn The WebSocket of the specified Client.
+	 * @param client The Client to be added.
 	 */
-	public boolean inRange(Location location) {
-		return centre.distanceBetween(location) <= radius;
+	public void addClient(WebSocket conn, Client client) {
+		clients.put(conn, client);
+		centre = recalculateCentre(client.getLocation());
 	}
 
 	/**
@@ -59,17 +57,6 @@ public class Room {
 	}
 
 	/**
-	 * Adds a specified Client to the Room.
-	 *
-	 * @param conn The WebSocket of the specified Client.
-	 * @param client The Client to be added.
-	 */
-	public void addClient(WebSocket conn, Client client) {
-		clients.put(conn, client);
-        centre = recalculateCentre(client.getLocation());
-	}
-
-	/**
 	 * Handler method for Client Location update.
 	 *
 	 * @param client The Client whose Location is updated.
@@ -81,8 +68,20 @@ public class Room {
 			client.setLocation(location);
 			centre = recalculateCentre(oldLocation, location);
 		} else {
-			// TODO Client is giving location update to wrong room, what do?
+			// Client dun goof'd?
 		}
+	}
+
+	/**
+	 * Helper method used to recalculate the centre of the room when a new client is added.
+	 * Averages all the clients' locations.
+	 * Accuracy is ignored.
+	 *
+	 * @param newLocation
+	 */
+	private Location recalculateCentre(Location newLocation) {
+		return new Location(centre.getLatitude() + (newLocation.getLatitude() / clients.size()),
+				centre.getLongitude() + (newLocation.getLongitude() / clients.size()));
 	}
 
 	/**
@@ -100,16 +99,14 @@ public class Room {
 	}
 
 	/**
-	 * Helper method used to recalculate the centre of the room when a new client is added.
-	 * Averages all the clients' locations.
-	 * Accuracy is ignored.
+	 * Helper method to check whether or not the specified location is within the range of the room.
 	 *
-	 * @param newLocation
+	 * @param location The specified location.
+	 * @return True if the specified location is within the radius of the room.
 	 */
-    private Location recalculateCentre(Location newLocation) {
-		return new Location(centre.getLatitude() + (newLocation.getLatitude() / clients.size()),
-			centre.getLongitude() + (newLocation.getLongitude() / clients.size()));
-    }
+	public boolean inRange(Location location) {
+		return centre.distanceBetween(location) <= radius;
+	}
 
 	/**
 	 * The name and number of Clients in the Room.
@@ -119,5 +116,9 @@ public class Room {
 	@Override
 	public String toString() {
 		return name + '(' + clients.size() + ')';
+	}
+
+	public Location getCentre() {
+		return centre;
 	}
 }

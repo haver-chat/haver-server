@@ -8,6 +8,7 @@ public class RoomInfo extends Message {
 	public final String name;
 	public final double radius;
 
+
 	public RoomInfo(String name, double radius) {
 		this.name = name;
 		this.radius = radius;

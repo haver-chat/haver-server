@@ -1,10 +1,29 @@
+import org.java_websocket.WebSocket;
+
 public class Client {
 	private final String id;
 	private Location location;
-	private final  Object token;
+	private final Object token;
 
-	public void setLocation(Location location) {
-		this.location = location;
+	public Client() {
+		this.id = generateID();
+		location = new Location(0d, 0d, 0d);
+		this.token = generateToken();
+	}
+
+	//TODO Generate IDs
+	private String generateID() {
+		return null;
+	}
+
+	//TODO Generate tokens
+	private Object generateToken() {
+		return null;
+	}
+
+	//TODO Token validation
+	public boolean isValid() {
+		return true;
 	}
 
 	public Location getLocation() {
@@ -19,13 +38,8 @@ public class Client {
 		return token;
 	}
 
-	public Client(String id, Object token) {
-		this.id = id;
-		location = new Location(0d, 0d, 0d);
-		this.token = token;
+	public void setLocation(Location location) {
+		this.location = location;
 	}
 
-	public boolean isValid() {
-		return true;
-	}
 }

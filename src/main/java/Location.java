@@ -13,6 +13,7 @@ public class Location extends Message {
 	public final double accuracy;
 	public final long time; // epoch timestamp
 
+
 	public Location(double latitude, double longitude, double accuracy) {
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -35,7 +36,8 @@ public class Location extends Message {
 
 	/**
 	 * Helper method for finding the distance between two locations.
-	 * Currently ignores accuracy
+	 * Currently ignores accuracy.
+	 *
 	 * @param location
 	 * @return The distance between two locations.
 	 */
