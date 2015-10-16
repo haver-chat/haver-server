@@ -17,7 +17,6 @@ import java.util.HashMap;
 
 public class Router extends WebSocketServer {
 
-	private final static String KEY_TYPE = "type";
 	private final static int TYPE_LOCATION = 0;
 	private final static int TYPE_MESSAGE = 1;
 
@@ -62,7 +61,7 @@ public class Router extends WebSocketServer {
 		} catch(ParseException e) {
 			// TODO Client gave me bad JSON, wut do? =(
 		}
-		switch((int) jsonObject.get(KEY_TYPE)) {
+		switch((int) jsonObject.get(Location.KEY_TYPE)) {
 			case TYPE_LOCATION:
 				if (room != null) {
 					room.updateLocation(client, new Location(jsonObject));

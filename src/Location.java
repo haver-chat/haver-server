@@ -10,6 +10,12 @@ import java.util.Calendar;
  * @since 1.8
  */
 public class Location {
+
+	public final static String KEY_TYPE = "type";
+	public final static String KEY_LATITUDE = "latitude";
+	public final static String KEY_LONGITUDE = "longitude";
+	public final static String KEY_ACCURACY = "accuracy";
+
 	public final double latitude;
 	public final double longitude;
 	public final double accuracy;
@@ -23,27 +29,19 @@ public class Location {
 	}
 
 	public Location (JSONObject jsonObject) {
-		this((double) jsonObject.get("latitude"),
-			(double) jsonObject.get("longitude"),
-			(double) jsonObject.get("accuracy"));
+		this((double) jsonObject.get(KEY_LATITUDE),
+			(double) jsonObject.get(KEY_LONGITUDE),
+			(double) jsonObject.get(KEY_ACCURACY));
 	}
 
-	public double getLatitude() {
-		return latitude;
-	}
+	public double getLatitude() {return latitude;}
 
-	public double getLongitude() {
-		return longitude;
-	}
+	public double getLongitude() {return longitude;}
 
-	public double getAccuracy() {
-		return accuracy;
-	}
+	public double getAccuracy() {return accuracy;}
 
 	/**
 	 * @return standard Java epoch time when the location data was received from the client
 	 */
-	public long getTime() {
-		return time;
-	}
+	public long getTime() {return time;}
 }
