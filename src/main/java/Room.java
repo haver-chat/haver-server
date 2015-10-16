@@ -13,8 +13,8 @@ import java.util.HashMap;
 public class Room {
 	private String name;
 	private Location centre;
-	private float radius;
-	private HashMap<Object, Client> validClients; // <Object token, Client client>
+	private double radius;
+	private HashMap<WebSocket, Client> clients;
 
 	public Room(String name, Location centre, float radius) {
 		this.name = name;
@@ -24,21 +24,21 @@ public class Room {
 
 	public void onClose(Client client, int code, String reason, boolean remote) {
 		broadcast(client, new Message(client, "Some message saying a client has d/c'ed"));
-		validClients.remove(client);
+		clients.remove(client);
 	}
 
 	public void broadcast(Client client, Message message) {
 
 	}
 
-	public void addClient(Client client) {validClients.put(client.getToken(), client);}
+	public void addClient(WebSocket conn, Client client) {
+		clients.put(conn, client);
+	}
 
 	public void updateLocation(Client client, Location location) {
-		for(Client validClient : validClients.values()) {
-			if(client.getToken() == validClient.getToken()) { // Valid client
-				validClients.replace(client.getToken(), validClient, client);
-				break;
-			}
+		if (client.isValid()) {
+			client.setLocation(location);
 		}
+		// recalculate centre
 	}
 }

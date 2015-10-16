@@ -34,16 +34,6 @@ public class Router extends WebSocketServer {
 		clients.put(conn, new Client(generateID(conn), generateToken(conn)));
 	}
 
-	//TODO Generate IDs
-	private String generateID(WebSocket conn) {
-		return null;
-	}
-
-	//TODO Generate tokens
-	private Object generateToken(WebSocket conn) {
-		return null;
-	}
-
 	@Override
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
 		Client client = clients.get(conn);
@@ -51,9 +41,9 @@ public class Router extends WebSocketServer {
 	}
 
 	@Override
-	public void onMessage( WebSocket conn, String message) {
+	public void onMessage(WebSocket conn, String message) {
 		Client client = clients.get(conn);
-		Room room =rooms.get(client);
+		Room room = rooms.get(client);
 		JSONObject jsonObject = null; // TODO init to null?
 
 		try {
@@ -70,7 +60,7 @@ public class Router extends WebSocketServer {
 					room = null;
 					// Add to the rooms hashmap
 					rooms.put(client, room);
-					room.addClient(client);
+					room.addClient(conn, client);
 				}
 				break;
 
@@ -85,16 +75,26 @@ public class Router extends WebSocketServer {
 		}
 	}
 
+	@Override
+	public void onError(WebSocket conn, Exception ex) {
+		ex.printStackTrace();
+		if (conn != null) {
+			// some errors like port binding failed may not be assignable to a specific websocket
+		}
+	}
+
 	public static JSONObject serialise(String message) {
 		return null;
 	}
 
-	@Override
-	public void onError( WebSocket conn, Exception ex ) {
-		ex.printStackTrace();
-		if( conn != null ) {
-			// some errors like port binding failed may not be assignable to a specific websocket
-		}
+	//TODO Generate IDs
+	private String generateID(WebSocket conn) {
+		return null;
+	}
+
+	//TODO Generate tokens
+	private Object generateToken(WebSocket conn) {
+		return null;
 	}
 
 	public void sendToAll( String text ) {
