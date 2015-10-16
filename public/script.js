@@ -1,4 +1,3 @@
-// TODO Check lat/long/acc isn't 0/0/0
 var Position = function() {
   var _this = this;
   this.longitude = 0;
@@ -27,7 +26,39 @@ var Position = function() {
   this.reqPosition();
 }
 
-/*var map;
+var Socket = function() {
+  var _this = this;
+  this.socket = null;
+  
+  var connect = function() {
+    var protocol = location.protocol.split('http').join('ws') + '//';
+    _this.socket = new WebSocket(protocol + location.host + ':8080');
+    
+    _this.socket.onopen = function() {
+      var pos = null;
+      do {
+        pos = new Position();
+      } while (!pos.hasPosition());
+      this.send(JSON.stringify(pos));
+    }
+    
+    _this.socket.onclose = function() {
+      _this.reconnect();
+    }
+    
+    this.send = function(data) {
+      _this.socket.send(data);
+    }
+    
+  }
+  
+  var reconnect = function() {
+    
+  }
+}
+
+/*
+var map;
 var pos = new Position();
 function initMap() {
   var coords = {lat: pos.latitude, lng: pos.longitude}
@@ -62,6 +93,7 @@ function getCurrentPosition(callback) {
 
 var whatever = function(pos) {
   console.log(JSON.stringify(pos));
-}*/
+}
 
 getCurrentPosition(whatever);
+*/
