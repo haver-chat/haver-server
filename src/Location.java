@@ -22,12 +22,11 @@ public class Location {
         this.time = Calendar.getInstance().getTimeInMillis();
 	}
 
-	public static Location fromJSON(JSONObject jsonObject) {
-		return new Location(
-				(double) jsonObject.get("latitude"),
-				(double) jsonObject.get("longitude"),
-				(double) jsonObject.get("accuracy")
-		);
+	public Location (JSONObject jsonObject) {
+		this.latitude = (double) jsonObject.get("latitude");
+		this.longitude = (double) jsonObject.get("longitude");
+		this.accuracy = (double) jsonObject.get("accuracy");
+		this.time = Calendar.getInstance().getTimeInMillis();
 	}
 
 	public double getLatitude() {
@@ -43,7 +42,7 @@ public class Location {
 	}
 
 	/**
-	 * @return standard Java epoch time when the location data was recieved from the client
+	 * @return standard Java epoch time when the location data was received from the client
 	 */
 	public long getTime() {
 		return time;
