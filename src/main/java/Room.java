@@ -1,5 +1,4 @@
 import org.java_websocket.WebSocket;
-
 import java.util.HashMap;
 
 public class Room {
@@ -18,7 +17,15 @@ public class Room {
 	public Room(String name, Location centre, double radius) {
 		this.name = name;
 		this.centre = centre;
-		this.radius = radius;
+		this.radius = radius; // Change as more people are added?
+	}
+
+	public Room(RoomInfo roomInfo, Location centre) {
+		this(roomInfo.getName(), centre, roomInfo.getRadius());
+	}
+
+	public Location getCentre() {
+		return centre;
 	}
 
 	/**
@@ -40,17 +47,17 @@ public class Room {
 	 * @param remote
 	 */
 	public void onClose(Client client, int code, String reason, boolean remote) {
-		broadcast(new Message(client, "Some message saying a client has d/c'ed"));
+		broadcast(new Post(client, "Some message saying a client has d/c'ed"));
 		clients.remove(client);
 	}
 
 	/**
 	 * Sends the specified message to every Client in the Room.
-	 * @param message The message to be broadcast.
+	 * @param post The message to be broadcast.
 	 */
-	public void broadcast(Message message) {
+	public void broadcast(Post post) {
 		for(WebSocket conn : clients.keySet()) {
-			conn.send(message.toJSON());
+			conn.send(post.toJSON());
 		}
 	}
 

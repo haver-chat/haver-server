@@ -18,6 +18,7 @@ public class Router extends WebSocketServer {
 
 	private final static int TYPE_LOCATION = 0;
 	private final static int TYPE_MESSAGE = 1;
+	private final static int TYPE_ROOM_INFO = 2;
 
 	private final static JSONParser parser = new JSONParser();
 	private final static int PORT = 8080;
@@ -37,6 +38,8 @@ public class Router extends WebSocketServer {
 	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
 		Client client = clients.get(conn);
 		rooms.get(client).onClose(client, code, reason, remote);
+		clients.remove(conn);
+		rooms.remove(client);
 	}
 
 	@Override
@@ -47,28 +50,41 @@ public class Router extends WebSocketServer {
 
 		try {
 			jsonObject = (JSONObject) parser.parse(message);
+			int type = (int) jsonObject.get(Location.KEY_TYPE);
 
-			switch((int) jsonObject.get(Location.KEY_TYPE)) {
-				case TYPE_LOCATION:
-					if (room != null) {
+			if(room != null) {
+				switch (type) {
+					case TYPE_LOCATION:
 						room.updateLocation(client, new Location(jsonObject));
-					} else {
-						// Give the client a room
-						room = null;
-						// Add to the rooms hashmap
-						rooms.put(client, room);
-						room.addClient(conn, client);
-					}
-					break;
-
-				case TYPE_MESSAGE:
-					if (room != null) {
-						room.broadcast(new Message(jsonObject));
-					} else {
-						// Client has dun-goofed and sent a message when it isn't in a room
-						// TODO Decide what to do here. Ignore?
-					}
-					break;
+						break;
+					case TYPE_MESSAGE:
+						room.broadcast(new Post(jsonObject));
+						break;
+					default:
+						// TODO DUN GOOF'D
+						break;
+				}
+			} else {
+				switch (type) {
+					case TYPE_LOCATION:
+						Location location = new Location(jsonObject);
+						client.setLocation(location);
+						rooms.replace(client, getRoom(location));
+						break;
+					case TYPE_ROOM_INFO:
+						if(client.getLocation() != null) {
+							RoomInfo roomInfo = new RoomInfo(jsonObject);
+							room = new Room(roomInfo, client.getLocation());
+							rooms.replace(client, room);
+							room.addClient(conn, client);
+						} else {
+							// Client has given room information but no location beforehand
+						}
+						break;
+					default:
+						// TODO DUN GOOF'D
+						break;
+				}
 			}
 		} catch(ParseException e) {
 			// TODO Client gave me bad JSON, wut do? =(
@@ -97,13 +113,29 @@ public class Router extends WebSocketServer {
 		return null;
 	}
 
-	/**
-	 * Sends the specified Message to every Client
-	 * @param message The message to send
-	 */
-	public void broadcast(Message message) {
+	public Room getRoom(Location location) {
+		double closest = -1d;
+		Room result = null;
+
 		for(Room room : rooms.values()) {
-			room.broadcast(message);
+			if(room.inRange(location)) {
+				double distance = room.getCentre().distanceBetween(location);
+				if(distance < closest) {
+					closest = distance;
+					result = room;
+				}
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * Sends the specified message to every Client
+	 * @param post The message to send
+	 */
+	public void broadcast(Post post) {
+		for(Room room : rooms.values()) {
+			room.broadcast(post);
 		}
 	}
 

@@ -2,9 +2,8 @@ import org.json.simple.JSONObject;
 
 import java.util.Calendar;
 
-public class Location {
+public class Location extends Message {
 
-	public final static String KEY_TYPE = "type";
 	public final static String KEY_LATITUDE = "latitude";
 	public final static String KEY_LONGITUDE = "longitude";
 	public final static String KEY_ACCURACY = "accuracy";
