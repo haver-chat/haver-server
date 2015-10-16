@@ -94,7 +94,7 @@ public class Router extends WebSocketServer {
 						break;
 
 					case TYPE_POST:
-						room.broadcast(new Post(jsonObject));
+						room.send(new Post(jsonObject));
 						break;
 
 					default:
@@ -167,12 +167,12 @@ public class Router extends WebSocketServer {
 	}
 
 	/**
-	 * Sends the specified message to every Client
+	 * Sends the specified message to every Room
 	 * @param post The Post to send
 	 */
 	public void broadcast(Post post) {
 		for(Room room : rooms.values()) {
-			room.broadcast(post);
+			room.send(post);
 		}
 	}
 

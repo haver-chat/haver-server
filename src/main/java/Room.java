@@ -1,4 +1,5 @@
 import org.java_websocket.WebSocket;
+
 import java.util.HashMap;
 
 /**
@@ -43,16 +44,29 @@ public class Room {
 	 */
 	public void close(Client client) {
 		clients.remove(client);
-		broadcast(new Post(client, "Some message saying a client has d/c'ed"));
+		send(new Post(client.getId(), "Some message saying a client has d/c'ed"));
 	}
 
 	/**
-	 * Sends the specified message to every Client in the Room.
+	 * Sends the specified Post to the correct Clients in the Room.
+	 *
 	 * @param post The message to be broadcast.
 	 */
-	public void broadcast(Post post) {
-		for(WebSocket conn : clients.keySet()) {
-			conn.send(post.toJSON());
+	public void send(Post post) {
+		if(post.getTo() == null) {
+			for (WebSocket conn : clients.keySet()) {
+				conn.send(post.toString());
+			}
+		} else {
+			for(String id : post.getTo()) {
+				for(WebSocket conn : clients.keySet()) {
+					Client client = clients.get(conn);
+					if(client.getId().equals(id)) {
+						conn.send(post.toString());
+						break;
+					}
+				}
+			}
 		}
 	}
 
