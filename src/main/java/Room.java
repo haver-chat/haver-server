@@ -5,7 +5,7 @@ public class Room {
 	private String name;
 	private Location centre;
 	private double radius;
-	private HashMap<WebSocket, Client> clients;
+	private HashMap<WebSocket, Client> clients = new HashMap<>();
 
 	/**
 	 * A location-based chat room.
