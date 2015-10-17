@@ -17,7 +17,7 @@ public class RoomInfo extends Message {
 	public RoomInfo(JSONObject jsonObject) {
 		// TODO Check if this errors
 		this((String) jsonObject.get(KEY_NAME),
-			(double) jsonObject.get(KEY_RADIUS));
+			((Long) jsonObject.get(KEY_RADIUS)).doubleValue());
 	}
 
 	public String getName() {
