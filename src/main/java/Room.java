@@ -1,5 +1,6 @@
 import org.java_websocket.WebSocket;
 
+import java.util.Arrays;
 import java.util.HashMap;
 
 /**
@@ -53,6 +54,10 @@ public class Room {
 	 * @param post The message to be broadcast.
 	 */
 	public void send(Post post) {
+		if(post.getContent().startsWith("/")) {
+			if(post.setContent(parseCommand(post.getContent().substring(1))) == null) {return;}
+		}
+
 		if(post.getTo() == null) {
 			for (WebSocket conn : clients.keySet()) {
 				conn.send(post.toString());
@@ -67,6 +72,19 @@ public class Room {
 					}
 				}
 			}
+		}
+	}
+
+	public String parseCommand(String message) {
+		String[] splitMessage = message.split("\\s");
+		String command = splitMessage[0];
+		String[] args = Arrays.copyOfRange(splitMessage, 1, splitMessage.length);
+
+		switch(command) {
+			// Implement commands here with a final static String
+			default:
+				// No command found
+				return null;
 		}
 	}
 

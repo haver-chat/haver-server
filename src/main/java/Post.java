@@ -7,7 +7,7 @@ public class Post extends Message {
 	public final static String KEY_TO = "to";
 
     private final String from;
-    private final String content;
+    private String content;
 	private final String[] to; // If not specified (null), broadcast.
 
 
@@ -40,6 +40,11 @@ public class Post extends Message {
 			//obj.put(KEY_TO, to); Not included as this is a BCC system
         return jsonObject.toJSONString();
     }
+
+	public String setContent(String content) {
+		this.content = content;
+		return this.content;
+	}
 
 	public String getFrom() {
 		return from;
