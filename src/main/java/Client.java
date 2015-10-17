@@ -7,6 +7,7 @@ public class Client {
 
 	public Client() {
 		this.id = generateID();
+		// TODO Assign a client a name and profile picture?
 		location = new Location(0d, 0d, 0d);
 		this.token = generateToken();
 	}

@@ -57,9 +57,8 @@ public class Room {
 	 * @param post The message to be broadcast.
 	 */
 	public void send(Post post) {
-		if(post.getContent().startsWith("/")) {
-			if((post = parseCommand(post)) == null) {return;}
-		}
+		if(post.getContent().startsWith("/") &&
+			(post = parseCommand(post)) == null) {return;}
 
 		if(post.getTo() == null) {
 			for (WebSocket conn : clients.keySet()) {
@@ -130,7 +129,7 @@ public class Room {
 	 * Averages all the clients' locations.
 	 * Accuracy is ignored.
 	 *
-	 * @param newLocation
+	 * @param newLocation The Location of the new Client.
 	 */
 	private Location recalculateCentre(Location newLocation) {
 		return new Location(centre.getLatitude() + (newLocation.getLatitude() / clients.size()),
@@ -142,8 +141,8 @@ public class Room {
 	 * Averages all the clients' locations.
 	 * Accuracy is ignored.
 	 *
-	 * @param oldLocation
-	 * @param updatedLocation
+	 * @param oldLocation The old Location of the Client.
+	 * @param updatedLocation The Client's new Location.
 	 */
 	private Location recalculateCentre(Location oldLocation, Location updatedLocation) {
 		updatedLocation = recalculateCentre(updatedLocation);
