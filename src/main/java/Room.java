@@ -68,7 +68,7 @@ public class Room {
 			for(String id : post.getTo()) {
 				for(WebSocket conn : clients.keySet()) {
 					Client client = clients.get(conn);
-					if(client.getId().equals(id)) {
+					if(client.getId().equals(id) || client.getId().equals(post.getFrom())) {
 						conn.send(post.toString());
 						break;
 					}
@@ -85,8 +85,12 @@ public class Room {
 		switch(command) {
 			// Implement commands here with a final static String
 			case(COMMAND_WHISPER):
-				post.setTo(resolveName(args[0]));
-				post.setContent(post.getContent().substring(1 + command.length() + 1 + args[0].length() + 1));
+				if(!post.getFrom().equals(args[0])) {
+					post.setTo(resolveName(args[0]));
+					post.setContent(post.getContent().substring(1 + command.length() + 1 + args[0].length() + 1));
+				} else {
+					return null; // Cannot whisper to self
+				}
 				break;
 			default:
 				// No command found
