@@ -24,6 +24,7 @@ public class Post extends Message {
 	}
 
 	public Post(JSONObject jsonObject) {
+		// TODO Check if this errors
 		this((String) jsonObject.get(KEY_FROM),
 			(String) jsonObject.get(KEY_CONTENT),
 			(String[]) jsonObject.get(KEY_TO));

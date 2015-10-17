@@ -29,6 +29,7 @@ public class Location extends Message {
 	}
 
 	public Location (JSONObject jsonObject) {
+		// TODO Check if this errors
 		this((double) jsonObject.get(KEY_LATITUDE),
 			(double) jsonObject.get(KEY_LONGITUDE),
 			(double) jsonObject.get(KEY_ACCURACY));
