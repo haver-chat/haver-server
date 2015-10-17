@@ -7,6 +7,9 @@ import java.util.HashMap;
  * A location-based chat room.
  */
 public class Room {
+
+	public final static String COMMAND_WHISPER = "whisper";
+
 	private String name;
 	private Location centre;
 	private double radius;
@@ -55,7 +58,7 @@ public class Room {
 	 */
 	public void send(Post post) {
 		if(post.getContent().startsWith("/")) {
-			if(post.setContent(parseCommand(post.getContent().substring(1))) == null) {return;}
+			if((post = parseCommand(post)) == null) {return;}
 		}
 
 		if(post.getTo() == null) {
@@ -75,17 +78,35 @@ public class Room {
 		}
 	}
 
-	public String parseCommand(String message) {
-		String[] splitMessage = message.split("\\s");
-		String command = splitMessage[0];
-		String[] args = Arrays.copyOfRange(splitMessage, 1, splitMessage.length);
+	public Post parseCommand(Post post) {
+		String[] splitContent = post.getContent().substring(1).split("\\s");
+		String command = splitContent[0].toLowerCase();
+		String[] args = Arrays.copyOfRange(splitContent, 1, splitContent.length);
 
 		switch(command) {
 			// Implement commands here with a final static String
+			case(COMMAND_WHISPER):
+				post.setTo(resolveName(args[0]));
+				post.setContent(post.getContent().substring(1 + command.length() + 1 + args[0].length() + 1));
+				break;
 			default:
 				// No command found
 				return null;
 		}
+
+		return post;
+	}
+
+	/**
+	 * Helper method to resolve a display name into a Client ID.
+	 *
+	 * @param name The name to resolve.
+	 * @return The client ID the display name is associated with.
+	 */
+	public String resolveName(String name) {
+		// TODO Implement names for clients (and profile pictures)
+		String id = name;
+		return name;
 	}
 
 	/**

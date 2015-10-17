@@ -6,9 +6,9 @@ public class Post extends Message {
 	public final static String KEY_CONTENT = "content";
 	public final static String KEY_TO = "to";
 
-    private final String from;
+    private String from;
     private String content;
-	private final String[] to; // If not specified (null), broadcast.
+	private String[] to; // If not specified (null), broadcast.
 
 
     public Post(String from, String content) {
@@ -37,13 +37,25 @@ public class Post extends Message {
         JSONObject jsonObject = new JSONObject();
 			jsonObject.put(KEY_FROM, from);
 			jsonObject.put(KEY_CONTENT, content);
-			//obj.put(KEY_TO, to); Not included as this is a BCC system
+			jsonObject.put(KEY_TO, to); // NB: All recipiants know all other recipiants.
         return jsonObject.toJSONString();
     }
+
+	public void setFrom(String from) {
+		this.from = from;
+	}
 
 	public String setContent(String content) {
 		this.content = content;
 		return this.content;
+	}
+
+	public void setTo(String[] to) {
+		this.to = to;
+	}
+
+	public void setTo(String to) {
+		this.to = new String[]{to};
 	}
 
 	public String getFrom() {
