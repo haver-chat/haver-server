@@ -74,7 +74,7 @@ public class Router extends WebSocketServer {
 	public void onMessage(WebSocket conn, String message) {
 		Client client = clients.get(conn);
 		Room room = rooms.get(client);
-		System.out.println("Message from [" + client.getId() + ": " + message);
+		System.out.println("Message from [" + client.getId() + "]: " + message);
 
 		try {
 			JSONObject jsonObject = (JSONObject) parser.parse(message);

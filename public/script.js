@@ -33,6 +33,7 @@ var Socket = function() {
     LOCATION: 0,
     MESSAGE: 1
   };
+  this.send = null;
   
   this.connect = function() {
     var protocol = location.protocol.split('http').join('ws') + '//';
@@ -53,10 +54,10 @@ var Socket = function() {
       console.log(data);
     }
     
-    this.send = function(type, data) {
+    _this.send = function(type, data) {
       data['type'] = type;
-      console.log(JSON.stringify(data));
-      //_this.socket.send(JSON.stringify(data));
+      console.log(JSON.stringify(data)); // log what we send
+      _this.socket.send(JSON.stringify(data));
     }
     
   }
