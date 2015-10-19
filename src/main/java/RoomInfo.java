@@ -2,8 +2,10 @@ import org.json.simple.JSONObject;
 
 public class RoomInfo extends Message {
 
-	private final static String KEY_NAME = "name";
-	private final static String KEY_RADIUS = "radius";
+	public final static String KEY_NAME = "name";
+	public final static String KEY_RADIUS = "radius";
+	public final static double RADIUS_MAX = 1000d; // TODO Decide on value
+	public final static double RADIUS_MIN = 20d; // TODO Decide on value
 
 	public final String name;
 	public final double radius;
@@ -26,5 +28,21 @@ public class RoomInfo extends Message {
 
 	public double getRadius() {
 		return radius;
+	}
+
+	/**
+	 * @param message
+	 * @return True if the RoomInfo is valid
+	 */
+	@Override
+	public boolean valid(JSONObject message) {
+		double radius;
+		return super.valid(message) &&
+			message.get(KEY_NAME) instanceof String &&
+			((String) message.get(KEY_NAME)).length() > 0 &&
+
+			message.get(KEY_RADIUS) instanceof Long &&
+			(radius = ((Long) message.get(KEY_RADIUS)).doubleValue()) >= RADIUS_MIN &&
+			radius <= RADIUS_MAX;
 	}
 }

@@ -8,7 +8,9 @@ import java.util.HashMap;
  */
 public class Room {
 
-	public final static String COMMAND_WHISPER = "whisper";
+	public final static String COMMAND_WHISPER = "whisper"; // TODO Move this command to client side?
+	public final static String[] COLOURS = null;
+	public final static String[] THINGS = null; // Change to read in from file instead of set in code later.
 
 	private String name;
 	private Location centre;
@@ -24,6 +26,7 @@ public class Room {
 		this.name = name;
 		this.centre = centre;
 		this.radius = radius; // TODO Change as more people are added?
+		// TODO Enforce min/max values
 	}
 
 	public Room(RoomInfo roomInfo, Location centre) {
@@ -37,8 +40,19 @@ public class Room {
 	 * @param client The Client to be added.
 	 */
 	public void addClient(WebSocket conn, Client client) {
+		// Generate and give client an ID that's unique to this room
 		clients.put(conn, client);
 		centre = recalculateCentre(client.getLocation());
+		send(new Post(client.getId(), "Some message saying a client has arrived"));
+	}
+
+	/**
+	 * Generate a client ID that's unique to the room.
+	 * A combination of objects and colours.
+	 */
+	private String generateID() {
+		// TODO
+		return null;
 	}
 
 	/**
@@ -60,7 +74,7 @@ public class Room {
 		if(post.getContent().startsWith("/") &&
 			(post = parseCommand(post)) == null) {return;}
 
-		if(post.getTo() == null) {
+		if(post.getTo().length == 0) { // TODO This may need changing
 			for (WebSocket conn : clients.keySet()) {
 				conn.send(post.toString());
 			}

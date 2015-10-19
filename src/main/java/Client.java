@@ -1,20 +1,14 @@
 import org.java_websocket.WebSocket;
 
 public class Client {
-	private final String id;
+	private String id;
 	private Location location;
 	private final Object token;
 
 	public Client() {
-		this.id = generateID();
 		// TODO Assign a client a name and profile picture?
 		location = new Location(0d, 0d, 0d);
 		this.token = generateToken();
-	}
-
-	//TODO Generate IDs
-	private String generateID() {
-		return null;
 	}
 
 	//TODO Generate tokens
@@ -41,6 +35,11 @@ public class Client {
 
 	public void setLocation(Location location) {
 		this.location = location;
+	}
+
+	public static boolean validId(String id) {
+		// TODO
+		return true;
 	}
 
 }

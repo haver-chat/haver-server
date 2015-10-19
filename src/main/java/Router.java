@@ -17,13 +17,6 @@ import java.util.HashMap;
  */
 public class Router extends WebSocketServer {
 
-	private final static int TYPE_ROOM_INFO = -1;
-	private final static int TYPE_LOCATION = 0;
-	private final static int TYPE_POST = 1;
-	private final static String ROOM_INFO_REQUEST = "{\"type\":" + TYPE_ROOM_INFO + '}';
-	private final static String LOCATION_REQUEST = "{\"type\":" + TYPE_LOCATION + '}';
-	private final static String POST_REQUEST = "{\"type\":" + TYPE_POST + '}';
-
 	private final static JSONParser parser = new JSONParser();
     private final static String HOSTNAME = "localhost";
 	private final static int PORT = 8080;
@@ -82,7 +75,7 @@ public class Router extends WebSocketServer {
 
 			if(room != null) {
 				switch (type) {
-					case TYPE_LOCATION:
+					case Message.TYPE_LOCATION:
 						if (room.inRange(client.getLocation())) {
 							room.updateLocation(client, new Location(jsonObject));
 						} else {
@@ -93,7 +86,7 @@ public class Router extends WebSocketServer {
 						}
 						break;
 
-					case TYPE_POST:
+					case Message.TYPE_POST:
 						room.send(new Post(jsonObject));
 						break;
 
@@ -103,31 +96,31 @@ public class Router extends WebSocketServer {
 				}
 			} else {
 				switch (type) {
-					case TYPE_LOCATION:
+					case Message.TYPE_LOCATION:
 						Location location = new Location(jsonObject);
 						client.setLocation(location);
 						room = getRoom(location);
 						if(room != null) {
 							setRoom(conn, client, room);
 						} else {
-							conn.send(ROOM_INFO_REQUEST);
+							conn.send(Message.ROOM_INFO_REQUEST);
 						}
 						break;
 
-					case TYPE_ROOM_INFO:
+					case Message.TYPE_ROOM_INFO:
 						if(client.getLocation() != null) {
 							RoomInfo roomInfo = new RoomInfo(jsonObject);
 							room = new Room(roomInfo, client.getLocation());
 							setRoom(conn, client, room);
 						} else {
 							// Client dun goof'd
-							conn.send(LOCATION_REQUEST);
+							conn.send(Message.LOCATION_REQUEST);
 						}
 						break;
 
 					default:
 						// Client dun goof'd
-						conn.send(LOCATION_REQUEST);
+						conn.send(Message.LOCATION_REQUEST);
 						break;
 				}
 			}
@@ -147,7 +140,8 @@ public class Router extends WebSocketServer {
 	private void setRoom(WebSocket conn, Client client, Room room) {
 		rooms.replace(client, room);
 		room.addClient(conn, client);
-		conn.send(POST_REQUEST); // Receipt of a Post request tells the Client it has been allocated to a valid room
+		conn.send(Message.POST_REQUEST); // Receipt of a Post request tells the Client it has been allocated to a valid room
+		// TODO Add client id to the post request
 	}
 
 	public Room getRoom(Location location) {
