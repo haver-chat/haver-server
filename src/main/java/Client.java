@@ -9,6 +9,7 @@ public class Client {
 		"PurpleBattleship", "PurpleDog", "PurpleHat", "PurpleIron", "PurpleRacecar", "PurpleShoe", "PurpleThimble", "PurpleWheelbarrow",
 		"RedBattleship", "RedDog", "RedHat", "RedIron", "RedRacecar", "RedShoe", "RedThimble", "RedWheelbarrow",
 		"YellowBattleship", "YellowDog", "YellowHat", "YellowIron", "YellowRacecar", "YellowShoe", "YellowThimble", "YellowWheelbarrow"};
+	public final static String KEY_NAME = "name"; // Used for POST_REQUEST
 
 	private String name;
 	private Location location;

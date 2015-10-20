@@ -110,7 +110,7 @@ public class Router extends WebSocketServer {
 					case Message.TYPE_ROOM_INFO:
 						if(client.getLocation() != null) {
 							RoomInfo roomInfo = new RoomInfo(jsonObject);
-							room = new Room(roomInfo, client.getLocation());
+							room = new Room(roomInfo, client.getLocation()); // TODO User input is only asserted and not validated properly
 							setRoom(conn, client, room);
 						} else {
 							// Client dun goof'd
@@ -140,8 +140,7 @@ public class Router extends WebSocketServer {
 	private void setRoom(WebSocket conn, Client client, Room room) {
 		rooms.replace(client, room);
 		room.addClient(conn, client);
-		conn.send(Message.POST_REQUEST); // Receipt of a Post request tells the Client it has been allocated to a valid room
-		// TODO Add client name to the post request
+		conn.send(Message.postRequestFactory(client.getName())); // Receipt of a Post request tells the Client it has been allocated to a valid room
 	}
 
 	public Room getRoom(Location location) {

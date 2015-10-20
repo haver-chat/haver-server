@@ -13,9 +13,9 @@ public class Room {
 	public final static String COMMAND_WHISPER = "whisper"; // TODO Move this command to client side?
 
 	private final static Random random = new Random();
-	private String name;
+	private final String name;
 	private Location centre;
-	private double radius;
+	private final double radius;
 	private HashMap<WebSocket, Client> clients = new HashMap<>();
 	private ArrayList<String> freeNames = new ArrayList<>(Arrays.asList(Client.NAMES));
 
@@ -25,10 +25,12 @@ public class Room {
 	 * @param radius The distance in which a Client can join the Room.
 	 */
 	public Room(String name, Location centre, double radius) {
+		assert(name.length() > 0);
 		this.name = name;
+		assert(centre != null);
 		this.centre = centre;
+		assert(RoomInfo.validRadius(radius));
 		this.radius = radius; // TODO Change as more people are added?
-		// TODO Enforce min/max values
 	}
 
 	public Room(RoomInfo roomInfo, Location centre) {
@@ -86,7 +88,7 @@ public class Room {
 
 		if(post.getTo().length == 0) { // TODO This may need changing
 			for (WebSocket conn : clients.keySet()) {
-				assert(validNames(post));
+				assert(validNames(post) && conn.isOpen());
 				conn.send(post.toString());
 			}
 		} else {
@@ -94,7 +96,7 @@ public class Room {
 				for(WebSocket conn : clients.keySet()) {
 					Client client = clients.get(conn);
 					if(client.getName().equals(name) || client.getName().equals(post.getFrom())) {
-						assert(validNames(post));
+						assert(validNames(post) && conn.isOpen());
 						conn.send(post.toString());
 						break;
 					}

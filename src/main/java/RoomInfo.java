@@ -36,13 +36,21 @@ public class RoomInfo extends Message {
 	 */
 	@Override
 	public boolean valid(JSONObject message) {
-		double radius;
 		return super.valid(message) &&
 			message.get(KEY_NAME) instanceof String &&
 			((String) message.get(KEY_NAME)).length() > 0 &&
 
 			message.get(KEY_RADIUS) instanceof Long &&
-			(radius = ((Long) message.get(KEY_RADIUS)).doubleValue()) >= RADIUS_MIN &&
-			radius <= RADIUS_MAX;
+			validRadius(((Long) message.get(KEY_RADIUS)).doubleValue());
+	}
+
+	/**
+	 * Checks if the specified radius is within sensible bounds as defined by RADIUS_MIN and RADIUS_MAX.
+	 *
+	 * @param radius The radius to verify.
+	 * @return True if the radius is within the defined bounds.
+	 */
+	public static boolean validRadius(double radius) {
+		return radius > RADIUS_MIN && radius < RADIUS_MAX;
 	}
 }
