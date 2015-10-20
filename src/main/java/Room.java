@@ -1,7 +1,9 @@
 import org.java_websocket.WebSocket;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * A location-based chat room.
@@ -9,13 +11,13 @@ import java.util.HashMap;
 public class Room {
 
 	public final static String COMMAND_WHISPER = "whisper"; // TODO Move this command to client side?
-	public final static String[] COLOURS = null;
-	public final static String[] THINGS = null; // Change to read in from file instead of set in code later.
 
+	private final static Random random = new Random();
 	private String name;
 	private Location centre;
 	private double radius;
 	private HashMap<WebSocket, Client> clients = new HashMap<>();
+	private ArrayList<String> freeNames = new ArrayList<>(Arrays.asList(Client.NAMES));
 
 	/**
 	 * @param name The human-readable name of where the centre is.
@@ -40,19 +42,25 @@ public class Room {
 	 * @param client The Client to be added.
 	 */
 	public void addClient(WebSocket conn, Client client) {
-		// Generate and give client an ID that's unique to this room
-		clients.put(conn, client);
 		centre = recalculateCentre(client.getLocation());
-		send(new Post(client.getId(), "Some message saying a client has arrived"));
+		clients.put(conn, client);
+		client.setName(generateName()); // After .put to keep thread safe
+		send(new Post(client.getName(), "Some message saying a client has arrived"));
 	}
 
 	/**
-	 * Generate a client ID that's unique to the room.
-	 * A combination of objects and colours.
+	 * Generate a client name that's unique to the room.
+	 * A combination of things and colours.
 	 */
-	private String generateID() {
-		// TODO
-		return null;
+	private String generateName() {
+		if(freeNames.size() == 0) { // TODO Actually handle this situation somehow
+			System.err.println("ROOM IS OVER MAXIMUM LIMIT, OH SHIT SON");
+			System.exit(69);
+		}
+		int index = random.nextInt(freeNames.size());
+		String name = freeNames.get(index);
+		freeNames.remove(index);
+		return name;
 	}
 
 	/**
@@ -61,8 +69,10 @@ public class Room {
 	 * @param client The client whose connection has closed.
 	 */
 	public void close(Client client) {
+		client.setName(null);
+		freeNames.add(client.getName()); // Before .remove to keep thread safe
 		clients.remove(client);
-		send(new Post(client.getId(), "Some message saying a client has d/c'ed"));
+		send(new Post(client.getName(), "Some message saying a client has d/c'ed"));
 	}
 
 	/**
@@ -76,13 +86,15 @@ public class Room {
 
 		if(post.getTo().length == 0) { // TODO This may need changing
 			for (WebSocket conn : clients.keySet()) {
+				assert(validNames(post));
 				conn.send(post.toString());
 			}
 		} else {
-			for(String id : post.getTo()) {
+			for(String name : post.getTo()) {
 				for(WebSocket conn : clients.keySet()) {
 					Client client = clients.get(conn);
-					if(client.getId().equals(id) || client.getId().equals(post.getFrom())) {
+					if(client.getName().equals(name) || client.getName().equals(post.getFrom())) {
+						assert(validNames(post));
 						conn.send(post.toString());
 						break;
 					}
@@ -100,7 +112,7 @@ public class Room {
 			// Implement commands here with a final static String
 			case(COMMAND_WHISPER):
 				if(!post.getFrom().equals(args[0])) {
-					post.setTo(resolveName(args[0]));
+					post.setTo(args[0]);
 					post.setContent(post.getContent().substring(1 + command.length() + 1 + args[0].length() + 1));
 				} else {
 					return null; // Cannot whisper to self
@@ -112,18 +124,6 @@ public class Room {
 		}
 
 		return post;
-	}
-
-	/**
-	 * Helper method to resolve a display name into a Client ID.
-	 *
-	 * @param name The name to resolve.
-	 * @return The client ID the display name is associated with.
-	 */
-	public String resolveName(String name) {
-		// TODO Implement names for clients (and profile pictures)
-		String id = name;
-		return name;
 	}
 
 	/**
@@ -190,5 +190,45 @@ public class Room {
 
 	public Location getCentre() {
 		return centre;
+	}
+
+	/**
+	 * Checks if a name is in use in this Room.
+	 *
+	 * @param name The name to verify.
+	 * @return True if the name is being used in the room.
+	 */
+	public boolean validName(String name) {
+		for(Client client : clients.values()) {
+			if(client.getName().equals(name)) {return true;}
+		}
+		return false;
+
+		// Alternate implementation, which I believe will be slower:
+		//return Client.validName(name) &&
+		//	!freeNames.contains(name);
+	}
+
+	/**
+	 * Checks if an array of names are in use in this Room.
+	 *
+	 * @param names The names to verify.
+	 * @return True if all the names are being used in the room.
+	 */
+	public boolean validNames(String[] names) {
+		for(String name : names) {
+			if(!validName(name)) {return false;}
+		}
+		return true;
+	}
+
+	/**
+	 * Checks if the sender and receivers of a Post are in this Room.
+	 *
+	 * @param post The Post containing names to verify.
+	 * @return True if all the names are being used in the room.
+	 */
+	public boolean validNames(Post post) {
+		return validName(post.getFrom()) && validNames(post.getTo());
 	}
 }

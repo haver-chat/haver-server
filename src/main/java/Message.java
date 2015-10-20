@@ -12,7 +12,7 @@ public abstract class Message {
 	public final static int TYPE_LOCATION = 0;
 	public final static String LOCATION_REQUEST = "{\"" + KEY_TYPE + "\":" + TYPE_LOCATION + '}';
 	public final static int TYPE_POST = 1;
-	public final static String POST_REQUEST = "{\"" + KEY_TYPE + "\":" + TYPE_POST + '}'; // TODO change to JSON object so that the id can be added dynamically
+	public final static String POST_REQUEST = "{\"" + KEY_TYPE + "\":" + TYPE_POST + '}'; // TODO change to JSON object so that the name can be added dynamically
 
 	/**
 	 * @param message

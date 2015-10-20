@@ -35,7 +35,7 @@ public class Router extends WebSocketServer {
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
 		Client client = new Client();
 		clients.put(conn, client);
-        System.out.println("New connection: " + client.getId());
+        System.out.println("New connection: " + handshake.getContent());
 	}
 
 	@Override
@@ -46,7 +46,7 @@ public class Router extends WebSocketServer {
             rooms.get(client).close(client);
             rooms.remove(client);
         }
-        System.out.println("Connection closed: " + client.getId());
+        System.out.println("Connection closed: " + conn);
 	}
 
 	@Override
@@ -67,7 +67,7 @@ public class Router extends WebSocketServer {
 	public void onMessage(WebSocket conn, String message) {
 		Client client = clients.get(conn);
 		Room room = rooms.get(client);
-		System.out.println("Message from [" + client.getId() + "]: " + message);
+		System.out.println("Message from [" + conn + "]: " + message);
 
 		try {
 			JSONObject jsonObject = (JSONObject) parser.parse(message);
@@ -141,7 +141,7 @@ public class Router extends WebSocketServer {
 		rooms.replace(client, room);
 		room.addClient(conn, client);
 		conn.send(Message.POST_REQUEST); // Receipt of a Post request tells the Client it has been allocated to a valid room
-		// TODO Add client id to the post request
+		// TODO Add client name to the post request
 	}
 
 	public Room getRoom(Location location) {

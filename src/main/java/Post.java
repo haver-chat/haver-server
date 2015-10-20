@@ -10,18 +10,15 @@ public class Post extends Message {
     private String content;
 	private String[] to; // If not specified (null), broadcast.
 
+	public Post(String from, String content, String[] to) {
+		setFrom(from);
+		this.content = content;
+		setTo(to);
+	}
 
     public Post(String from, String content) {
-        this.from = from;
-        this.content = content;
-		this.to = null;
+        this(from, content, new String[0]);
     }
-
-	public Post(String from, String content, String[] to) {
-		this.from = from;
-		this.content = content;
-		this.to = to;
-	}
 
 	public Post(JSONObject jsonObject) {
 		// TODO Check if this errors
@@ -43,6 +40,7 @@ public class Post extends Message {
     }
 
 	public void setFrom(String from) {
+		assert(Client.validName(from));
 		this.from = from;
 	}
 
@@ -52,11 +50,12 @@ public class Post extends Message {
 	}
 
 	public void setTo(String[] to) {
+		assert(Client.validNames(to));
 		this.to = to;
 	}
 
 	public void setTo(String to) {
-		this.to = new String[]{to};
+		setTo(new String[]{to});
 	}
 
 	public String getFrom() {
@@ -82,16 +81,17 @@ public class Post extends Message {
 		String[] to;
 
 		if(!(super.valid(message) &&
-			message.get(KEY_TO) instanceof String &&
-			Client.validId((String) message.get(KEY_TO)) &&
+			message.get(KEY_FROM) instanceof String &&
+			Client.validName((String) message.get(KEY_FROM)) &&
 
 			message.get(KEY_CONTENT) instanceof String &&
 			((String) message.get(KEY_CONTENT)).length() > 0 &&
 
-			message.get(KEY_FROM) instanceof String[])) {return false;}
+			message.get(KEY_TO) instanceof String[])) {return false;}
 
-		for(String id : (String[]) message.get(KEY_FROM)) {
-			if(!Client.validId(id)) {return false;}
+		// Correctly allows for an empty array
+		for(String name : (String[]) message.get(KEY_TO)) {
+			if(!Client.validName(name)) {return false;}
 		}
 
 		return true;
