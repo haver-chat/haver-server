@@ -35,7 +35,7 @@ public class Post extends Message {
         JSONObject jsonObject = new JSONObject();
 			jsonObject.put(KEY_FROM, from);
 			jsonObject.put(KEY_CONTENT, content);
-			jsonObject.put(KEY_TO, to); // NB: All recipiants know all other recipiants.
+			jsonObject.put(KEY_TO, to); // NB: All recipients know all other recipients.
         return jsonObject.toJSONString();
     }
 
