@@ -31,7 +31,8 @@ var Socket = function() {
   this.socket = null;
   this.types = {
     LOCATION: 0,
-    MESSAGE: 1
+    MESSAGE: 1,
+    ROOM_INFO: 2
   };
   this.send = null;
   
@@ -50,8 +51,18 @@ var Socket = function() {
       _this.reconnect();
     }
     
-    _this.socket.onmessage = function(data) {
-      console.log(data);
+    _this.socket.onmessage = function(message) {
+      console.log(message);
+      var cum = JSON.parse(message.data);
+      console.log(cum);
+      if (cum.type == _this.types.ROOM_INFO) {
+        var whatever = {
+          name: "Bingo!",
+          radius: 10
+        }
+        _this.send(_this.types.ROOM_INFO, whatever);
+      }
+      
     }
     
     _this.send = function(type, data) {

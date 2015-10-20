@@ -1,14 +1,15 @@
 import java.util.Arrays;
+import java.util.List;
 
 public class Client {
 	// Change to read in from file instead of set in code later.
 	public final static String[] NAMES = {
-		"BlueBattleship", "BlueDog", "BlueHat", "BlueIron", "BlueRacecar", "BlueShoe", "BlueThimble", "BlueWheelbarrow",
-		"GreenBattleship", "GreenDog", "GreenHat", "GreenIron", "GreenRacecar", "GreenShoe", "GreenThimble", "GreenWheelbarrow",
-		"OrangeBattleship", "OrangeDog", "OrangeHat", "OrangeIron", "OrangeRacecar", "OrangeShoe", "OrangeThimble", "OrangeWheelbarrow",
-		"PurpleBattleship", "PurpleDog", "PurpleHat", "PurpleIron", "PurpleRacecar", "PurpleShoe", "PurpleThimble", "PurpleWheelbarrow",
-		"RedBattleship", "RedDog", "RedHat", "RedIron", "RedRacecar", "RedShoe", "RedThimble", "RedWheelbarrow",
-		"YellowBattleship", "YellowDog", "YellowHat", "YellowIron", "YellowRacecar", "YellowShoe", "YellowThimble", "YellowWheelbarrow"};
+		"BlueBattleship", "BlueDog", "BlueTophat", "BlueIron", "BlueRacecar", "BlueShoe", "BlueThimble", "BlueWheelbarrow",
+		"GreenBattleship", "GreenDog", "GreenTophat", "GreenIron", "GreenRacecar", "GreenShoe", "GreenThimble", "GreenWheelbarrow",
+		"OrangeBattleship", "OrangeDog", "OrangeTophat", "OrangeIron", "OrangeRacecar", "OrangeShoe", "OrangeThimble", "OrangeWheelbarrow",
+		"PurpleBattleship", "PurpleDog", "PurpleTophat", "PurpleIron", "PurpleRacecar", "PurpleShoe", "PurpleThimble", "PurpleWheelbarrow",
+		"RedBattleship", "RedDog", "RedTophat", "RedIron", "RedRacecar", "RedShoe", "RedThimble", "RedWheelbarrow",
+		"YellowBattleship", "YellowDog", "YellowTophat", "YellowIron", "YellowRacecar", "YellowShoe", "YellowThimble", "YellowWheelbarrow"};
 	public final static String KEY_NAME = "name"; // Used for POST_REQUEST
 
 	private String name;
@@ -62,7 +63,7 @@ public class Client {
 	 * @param names The names to validate.
 	 * @return True if all names are recognised.
 	 */
-	public static boolean validNames(String[] names) {
+	public static boolean validNames(List<String> names) {
 		for(String name : names) {
 			if(!(Arrays.binarySearch(NAMES, name) >= 0)) {return false;}
 		}

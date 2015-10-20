@@ -18,8 +18,10 @@ public class RoomInfo extends Message {
 
 	public RoomInfo(JSONObject jsonObject) {
 		// TODO Check if this errors
-		this((String) jsonObject.get(KEY_NAME),
-			((Long) jsonObject.get(KEY_RADIUS)).doubleValue());
+		this(
+				Message.stringFromJson(jsonObject, KEY_NAME),
+				Message.numberFromJson(jsonObject, KEY_RADIUS)
+		);
 	}
 
 	public String getName() {
@@ -38,10 +40,10 @@ public class RoomInfo extends Message {
 	public boolean valid(JSONObject message) {
 		return super.valid(message) &&
 			message.get(KEY_NAME) instanceof String &&
-			((String) message.get(KEY_NAME)).length() > 0 &&
+            (Message.stringFromJson(message, KEY_NAME)).length() > 0 &&
 
 			message.get(KEY_RADIUS) instanceof Long &&
-			validRadius(((Long) message.get(KEY_RADIUS)).doubleValue());
+			validRadius(Message.numberFromJson(message, KEY_RADIUS));
 	}
 
 	/**

@@ -1,9 +1,6 @@
 import org.java_websocket.WebSocket;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 /**
  * A location-based chat room.
@@ -86,7 +83,7 @@ public class Room {
 		if(post.getContent().startsWith("/") &&
 			(post = parseCommand(post)) == null) {return;}
 
-		if(post.getTo().length == 0) { // TODO This may need changing
+		if(post.getTo().size() == 0) { // TODO This may need changing
 			for (WebSocket conn : clients.keySet()) {
 				assert(validNames(post) && conn.isOpen());
 				conn.send(post.toString());
@@ -217,7 +214,7 @@ public class Room {
 	 * @param names The names to verify.
 	 * @return True if all the names are being used in the room.
 	 */
-	public boolean validNames(String[] names) {
+	public boolean validNames(List<String> names) {
 		for(String name : names) {
 			if(!validName(name)) {return false;}
 		}

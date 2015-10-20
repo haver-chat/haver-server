@@ -1,18 +1,20 @@
 import org.json.simple.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * All Messages have a constructor with the signature:
  * 	public CLASS(JSONObject jsonObject).
  * Fields must be primitives ONLY if they are to be stringifiable and override toString.
  */
 public abstract class Message {
-	public final static String KEY_TYPE = "type";
-	public final static int TYPE_ROOM_INFO = -1;
-	public final static String ROOM_INFO_REQUEST = "{\"" + KEY_TYPE + "\": " + TYPE_ROOM_INFO + '}';
 	public final static int TYPE_LOCATION = 0;
-	public final static String LOCATION_REQUEST = "{\"" + KEY_TYPE + "\": " + TYPE_LOCATION + '}';
 	public final static int TYPE_POST = 1;
-
+    public final static int TYPE_ROOM_INFO = 2;
+	public final static String KEY_TYPE = "type";
+	public final static String ROOM_INFO_REQUEST = "{\"" + KEY_TYPE + "\": " + TYPE_ROOM_INFO + '}';
+	public final static String LOCATION_REQUEST = "{\"" + KEY_TYPE + "\": " + TYPE_LOCATION + '}';
 	private final static String POST_REQUEST_START = "{\"" + KEY_TYPE + "\": " + TYPE_POST + ", \"" + Client.KEY_NAME + "\": ";
 
 	/**
@@ -34,6 +36,56 @@ public abstract class Message {
 	 * @return Stringified JSON with TYPE_POST and the specified name.
 	 */
 	public static String postRequestFactory(String name) {
-		return POST_REQUEST_START + name + "\"}";
+		return POST_REQUEST_START + "\"" + name + "\"}";
 	}
+
+	public static double parseJSON(Object o) {
+		if (o instanceof Double) {
+			return (double)o;
+		} else if (o instanceof Long) {
+			return ((Long)o).doubleValue();
+		} else {
+			System.out.println("Error in parseJSON");
+			return -1D;
+			// throw new YouDunGoofedException('lolwut');
+		}
+	}
+
+    protected static double numberFromJson(JSONObject object, String key) {
+        Object value = object.get(key);
+        if (value instanceof Double) {
+            return (double)value;
+        } else if (value instanceof Long) {
+            return ((Long)value).doubleValue();
+        } else {
+            System.out.println("Error in parseJSON");
+            return -1D;
+            // throw new YouDunGoofedException('lolwut');
+        }
+    }
+
+    protected static String stringFromJson(JSONObject object, String key) {
+        Object value = object.get(key);
+        if (value instanceof String) {
+            return (String)value;
+        } else {
+            System.out.println("Error in parseJSON");
+            return String.valueOf(-1D);
+            // throw new YouDunGoofedException('lolwut');
+        }
+    }
+
+    @SuppressWarnings("unchecked") // TODO: fix :^)
+    protected static List<String> listFromJson(JSONObject object, String key) {
+        Object value = object.get(key);
+        if (value instanceof List) {
+            return (List<String>)value;
+        } else {
+            System.out.println("Error in parseJSON");
+            List<String> list = new ArrayList<>();
+            list.add(String.valueOf(-1D));
+            return list;
+            // throw new YouDunGoofedException('lolwut');
+        }
+    }
 }

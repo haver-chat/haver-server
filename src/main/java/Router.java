@@ -87,7 +87,7 @@ public class Router extends WebSocketServer {
 						break;
 
 					case Message.TYPE_POST:
-						room.send(new Post(jsonObject));
+						room.send(new Post(jsonObject, client));
 						break;
 
 					default:
@@ -104,6 +104,7 @@ public class Router extends WebSocketServer {
 							setRoom(conn, client, room);
 						} else {
 							conn.send(Message.ROOM_INFO_REQUEST);
+                            System.out.println("Message to ["+conn+"]: <room info request>");
 						}
 						break;
 
@@ -115,12 +116,14 @@ public class Router extends WebSocketServer {
 						} else {
 							// Client dun goof'd
 							conn.send(Message.LOCATION_REQUEST);
+                            System.out.println("Invalid room info from ["+conn+"]: <location request>");
 						}
 						break;
 
 					default:
 						// Client dun goof'd
 						conn.send(Message.LOCATION_REQUEST);
+                        System.out.println("Invalid message from ["+conn+"]: <location request>");
 						break;
 				}
 			}
@@ -141,6 +144,7 @@ public class Router extends WebSocketServer {
 		rooms.replace(client, room);
 		room.addClient(conn, client);
 		conn.send(Message.postRequestFactory(client.getName())); // Receipt of a Post request tells the Client it has been allocated to a valid room
+        System.out.println("Added conn to room ["+conn+"]: <post request>");
 	}
 
 	public Room getRoom(Location location) {

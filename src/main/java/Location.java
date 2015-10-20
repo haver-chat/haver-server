@@ -34,9 +34,11 @@ public class Location extends Message {
 	}
 
 	public Location (JSONObject jsonObject) {
-		this(((Long) jsonObject.get(KEY_LATITUDE)).doubleValue(),
-			((Long) jsonObject.get(KEY_LONGITUDE)).doubleValue(),
-			((Long) jsonObject.get(KEY_ACCURACY)).doubleValue());
+        this(
+                Message.parseJSON(jsonObject.get(KEY_LATITUDE)),
+                Message.parseJSON(jsonObject.get(KEY_LONGITUDE)),
+                Message.parseJSON(jsonObject.get(KEY_ACCURACY))
+        );
 	}
 
 	/**
@@ -72,14 +74,14 @@ public class Location extends Message {
 		double longitude;
 		return super.valid(message) &&
 			message.get(KEY_LATITUDE) instanceof Long &&
-			(latitude = ((Long) message.get(KEY_LATITUDE)).doubleValue()) >= LATITUDE_MIN &&
+			(latitude = (Message.numberFromJson(message, KEY_LATITUDE))) >= LATITUDE_MIN &&
 			latitude <= LATITUDE_MAX &&
 
 			message.get(KEY_LONGITUDE) instanceof Long &&
-			(longitude = ((Long) message.get(KEY_LONGITUDE)).doubleValue()) >= LONGITUDE_MIN &&
+			(longitude = (Message.numberFromJson(message, KEY_LONGITUDE))) >= LONGITUDE_MIN &&
 			longitude <= LONGITUDE_MAX &&
 
 			message.get(KEY_ACCURACY) instanceof Long &&
-			(((Long) message.get(KEY_ACCURACY)).doubleValue()) >= ACCURACY_MIN;
+			Message.numberFromJson(message, KEY_ACCURACY) >= ACCURACY_MIN;
 	}
 }

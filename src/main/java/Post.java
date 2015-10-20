@@ -1,5 +1,8 @@
 import org.json.simple.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Post extends Message {
 
 	public final static String KEY_FROM = "from";
@@ -8,23 +11,25 @@ public class Post extends Message {
 
     private String from;
     private String content;
-	private String[] to; // If not specified (null), broadcast.
+	private List<String> to; // If not specified (null), broadcast.
 
-	public Post(String from, String content, String[] to) {
+	public Post(String from, String content, List<String> to) {
 		setFrom(from);
 		this.content = content;
 		setTo(to);
 	}
 
     public Post(String from, String content) {
-        this(from, content, new String[0]);
+        this(from, content, new ArrayList<>());
     }
 
-	public Post(JSONObject jsonObject) {
+	public Post(JSONObject jsonObject, Client client) {
 		// TODO Check if this errors
-		this((String) jsonObject.get(KEY_FROM),
-			(String) jsonObject.get(KEY_CONTENT),
-			(String[]) jsonObject.get(KEY_TO));
+		this(
+                client.getName(),
+                Message.stringFromJson(jsonObject, KEY_CONTENT),
+                (List<String>) jsonObject.get(KEY_TO)
+        );
 	}
 
 	/**
@@ -49,13 +54,15 @@ public class Post extends Message {
 		return this.content;
 	}
 
-	public void setTo(String[] to) {
+	public void setTo(List<String> to) {
 		assert(Client.validNames(to));
 		this.to = to;
 	}
 
 	public void setTo(String to) {
-		setTo(new String[]{to});
+		List<String> list = new ArrayList<>();
+		list.add(to);
+		setTo(list);
 	}
 
 	public String getFrom() {
@@ -66,7 +73,7 @@ public class Post extends Message {
 		return content;
 	}
 
-	public String[] getTo() {
+	public List<String> getTo() {
 		return to;
 	}
 
