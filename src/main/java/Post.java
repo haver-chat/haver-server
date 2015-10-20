@@ -11,7 +11,7 @@ public class Post extends Message {
 
     private String from;
     private String content;
-	private List<String> to; // If not specified (null), broadcast.
+	private List<String> to; // If not specified (empty), broadcast.
 
 	public Post(String from, String content, List<String> to) {
 		setFrom(from);
@@ -46,7 +46,7 @@ public class Post extends Message {
     }
 
 	public void setFrom(String from) {
-		if (Main.DEBUG && !(Client.validName(from))) { System.err.println("Assert error"); } // TODO: null check and fix error message
+		if (Main.DEBUG && !(Client.validName(from))) { System.err.println("Post:setFrom() : Name not valid"); } // TODO: null check and fix error message
 		this.from = from;
 	}
 
@@ -56,7 +56,7 @@ public class Post extends Message {
 	}
 
 	public void setTo(List<String> to) {
-		if (Main.DEBUG && !(Client.validNames(to))) { System.err.println("Assert error"); } // TODO: null check and fix error message
+		if (Main.DEBUG && !(Client.validNames(to))) { System.err.println("Post:setTo() : Names not in list"); } // TODO: null check and fix error message
 		this.to = to;
 	}
 

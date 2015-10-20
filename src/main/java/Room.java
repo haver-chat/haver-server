@@ -68,7 +68,6 @@ public class Room {
 	 * @param client The client whose connection has closed.
 	 */
 	public void close(Client client) {
-		client.setName(null);
 		freeNames.add(client.getName()); // Before .remove to keep thread safe
 		clients.remove(client);
 		send(new Post(client.getName(), "Some message saying a client has d/c'ed"));

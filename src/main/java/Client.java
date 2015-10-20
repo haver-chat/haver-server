@@ -41,7 +41,7 @@ public class Client {
 	public Object getToken() {return token;}
 
 	public void setName(String name) {
-		if (Main.DEBUG && !(validName(name))) { System.err.println("Assert error"); } // TODO: null check and fix error message
+		if (Main.DEBUG && !(validName(name))) { System.err.println("Client:setName() : Invalid name"); } // TODO: null check and fix error message
 		this.name = name;
 	}
 
