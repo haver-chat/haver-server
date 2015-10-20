@@ -1,13 +1,25 @@
-var Position = function() {
+var sendPos = function() {
+  var send = function(pos) {
+    _this.send(_this.types.LOCATION, pos);
+  }
+  var pos = new Position(send);
+}
+
+
+var Position = function(callback) {
   var _this = this;
   this.longitude = 0;
   this.latitude = 0;
   this.accuracy = -1;
+  this.callback = callback;
   
   this.setPosition = function(pos) {
     _this.latitude = pos.coords.latitude;
     _this.longitude = pos.coords.longitude;
     _this.accuracy = pos.coords.accuracy;
+    if (typeof callback != 'undefined') {
+      callback(_this);
+    }
   }
   
   this.reqPosition = function() {
@@ -26,12 +38,22 @@ var Position = function() {
   this.reqPosition();
 }
 
+var Post = function(content, recipients) {
+  this.content = content;
+  this.to = typeof recipients != "undefined" ? recipients : [];
+}
+
+var RoomInfo = function(name, radius) {
+  this.name = name;
+  this.radius = radius;
+}
+
 var Socket = function() {
   var _this = this;
   this.socket = null;
   this.types = {
     LOCATION: 0,
-    MESSAGE: 1,
+    POST: 1,
     ROOM_INFO: 2
   };
   this.send = null;
@@ -42,33 +64,43 @@ var Socket = function() {
     _this.socket = new WebSocket('ws://127.0.0.1:8080');
     
     _this.socket.onopen = function() {
-      var pos = null;
-      pos = new Position();
-      _this.send(_this.types.LOCATION, pos);
+      sendPos();
     }
     
     _this.socket.onclose = function() {
+      console.log("Disconnected");
       _this.reconnect();
     }
     
-    _this.socket.onmessage = function(message) {
+    _this.socket.onmessage = function(res) {
+      var message = JSON.parse(res.data);
       console.log(message);
-      var cum = JSON.parse(message.data);
-      console.log(cum);
-      if (cum.type == _this.types.ROOM_INFO) {
-        var whatever = {
-          name: "Bingo!",
-          radius: 10
-        }
-        _this.send(_this.types.ROOM_INFO, whatever);
+      var types = _this.types;
+      switch(message.type) {
+        case types.ROOM_INFO:
+          var room = new RoomInfo("Bingo!", 20);
+          _this.send(_this.types.ROOM_INFO, room);
+          break;
+        case types.LOCATION:
+          sendPos();
+          break;
+        default:
+          break;
       }
-      
     }
     
     _this.send = function(type, data) {
       data['type'] = type;
       console.log(JSON.stringify(data)); // log what we send
       _this.socket.send(JSON.stringify(data));
+    }
+    
+    var sendPos = function() {
+      var send = function(pos) {
+        console.log("Sending position: " + pos);
+        _this.send(_this.types.LOCATION, pos);
+      }
+      var pos = new Position(send);
     }
     
   }

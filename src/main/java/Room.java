@@ -22,11 +22,11 @@ public class Room {
 	 * @param radius The distance in which a Client can join the Room.
 	 */
 	public Room(String name, Location centre, double radius) {
-		assert(name.length() > 0);
+		if (Main.DEBUG && !(name.length() > 0)) { System.err.println("Room:Room() : Empty Name :^)"); } // TODO: null check and fix error message
 		this.name = name;
-		assert(centre != null);
+		if (Main.DEBUG && !(centre != null)) { System.err.println("Room:Room() : Centre is null"); } // TODO: null check and fix error message
 		this.centre = centre;
-		assert(RoomInfo.validRadius(radius));
+		if (Main.DEBUG && !(RoomInfo.validRadius(radius))) { System.err.println("Room:Room() : Invalid Radius"); } // TODO: null check and fix error message
 		this.radius = radius; // TODO Change as more people are added?
 	}
 
@@ -83,9 +83,9 @@ public class Room {
 		if(post.getContent().startsWith("/") &&
 			(post = parseCommand(post)) == null) {return;}
 
-		if(post.getTo().size() == 0) { // TODO This may need changing
+		if (post.getTo().size() == 0) {
 			for (WebSocket conn : clients.keySet()) {
-				assert(validNames(post) && conn.isOpen());
+				if (Main.DEBUG && !(validNames(post) && conn.isOpen())) { System.err.println("Either name not valid or connection closed"); } // TODO: null check and fix error message
 				conn.send(post.toString());
 			}
 		} else {
@@ -93,7 +93,7 @@ public class Room {
 				for(WebSocket conn : clients.keySet()) {
 					Client client = clients.get(conn);
 					if(client.getName().equals(name) || client.getName().equals(post.getFrom())) {
-						assert(validNames(post) && conn.isOpen());
+						if (Main.DEBUG && !(validNames(post) && conn.isOpen())) { System.err.println(""); } // TODO: null check and fix error message
 						conn.send(post.toString());
 						break;
 					}

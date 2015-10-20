@@ -53,6 +53,6 @@ public class RoomInfo extends Message {
 	 * @return True if the radius is within the defined bounds.
 	 */
 	public static boolean validRadius(double radius) {
-		return radius > RADIUS_MIN && radius < RADIUS_MAX;
+		return radius >= RADIUS_MIN && radius <= RADIUS_MAX;
 	}
 }

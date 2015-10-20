@@ -23,12 +23,12 @@ public class Post extends Message {
         this(from, content, new ArrayList<>());
     }
 
-	public Post(JSONObject jsonObject, Client client) {
+	public Post(JSONObject jsonObject) {
 		// TODO Check if this errors
 		this(
-                client.getName(),
+                Message.stringFromJson(jsonObject, KEY_FROM),
                 Message.stringFromJson(jsonObject, KEY_CONTENT),
-                (List<String>) jsonObject.get(KEY_TO)
+                Message.listFromJson(jsonObject, KEY_TO)
         );
 	}
 
@@ -45,7 +45,7 @@ public class Post extends Message {
     }
 
 	public void setFrom(String from) {
-		assert(Client.validName(from));
+		if (Main.DEBUG && !(Client.validName(from))) { System.err.println("Assert error"); } // TODO: null check and fix error message
 		this.from = from;
 	}
 
@@ -55,7 +55,7 @@ public class Post extends Message {
 	}
 
 	public void setTo(List<String> to) {
-		assert(Client.validNames(to));
+		if (Main.DEBUG && !(Client.validNames(to))) { System.err.println("Assert error"); } // TODO: null check and fix error message
 		this.to = to;
 	}
 
@@ -89,10 +89,10 @@ public class Post extends Message {
 
 		if(!(super.valid(message) &&
 			message.get(KEY_FROM) instanceof String &&
-			Client.validName((String) message.get(KEY_FROM)) &&
+			Client.validName(Message.stringFromJson(message, KEY_FROM)) &&
 
 			message.get(KEY_CONTENT) instanceof String &&
-			((String) message.get(KEY_CONTENT)).length() > 0 &&
+			Message.stringFromJson(message, KEY_CONTENT).length() > 0 &&
 
 			message.get(KEY_TO) instanceof String[])) {return false;}
 

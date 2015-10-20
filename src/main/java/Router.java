@@ -73,7 +73,7 @@ public class Router extends WebSocketServer {
 			JSONObject jsonObject = (JSONObject) parser.parse(message);
 			int type = ((Long) jsonObject.get(Location.KEY_TYPE)).intValue();
 
-			if(room != null) {
+			if (room != null) {
 				switch (type) {
 					case Message.TYPE_LOCATION:
 						if (room.inRange(client.getLocation())) {
@@ -87,10 +87,12 @@ public class Router extends WebSocketServer {
 						break;
 
 					case Message.TYPE_POST:
-						room.send(new Post(jsonObject, client));
+                        jsonObject.put(Post.KEY_FROM, client.getName());
+						room.send(new Post(jsonObject));
 						break;
 
 					default:
+                        System.out.println("Invalid message from ["+conn+"]: <location request>");
 						// Client dun goof'd
 						break;
 				}
@@ -100,7 +102,7 @@ public class Router extends WebSocketServer {
 						Location location = new Location(jsonObject);
 						client.setLocation(location);
 						room = getRoom(location);
-						if(room != null) {
+						if (room != null) {
 							setRoom(conn, client, room);
 						} else {
 							conn.send(Message.ROOM_INFO_REQUEST);
@@ -109,7 +111,7 @@ public class Router extends WebSocketServer {
 						break;
 
 					case Message.TYPE_ROOM_INFO:
-						if(client.getLocation() != null) {
+						if (client.getLocation() != null) {
 							RoomInfo roomInfo = new RoomInfo(jsonObject);
 							room = new Room(roomInfo, client.getLocation()); // TODO User input is only asserted and not validated properly
 							setRoom(conn, client, room);
@@ -141,7 +143,11 @@ public class Router extends WebSocketServer {
 	 * @param room The room that the client needs to be put in.
 	 */
 	private void setRoom(WebSocket conn, Client client, Room room) {
-		rooms.replace(client, room);
+        if (rooms.get(client) != null) {
+            rooms.replace(client, room);
+        } else {
+            rooms.put(client, room);
+        }
 		room.addClient(conn, client);
 		conn.send(Message.postRequestFactory(client.getName())); // Receipt of a Post request tells the Client it has been allocated to a valid room
         System.out.println("Added conn to room ["+conn+"]: <post request>");
@@ -172,14 +178,4 @@ public class Router extends WebSocketServer {
 			room.send(post);
 		}
 	}
-
-    public static void main(String[] args) {
-        try {
-            Router router = new Router();
-            router.start();
-            System.out.println("Hosting new server on: " + router.getAddress());
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-    }
 }
