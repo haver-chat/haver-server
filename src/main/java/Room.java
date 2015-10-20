@@ -93,7 +93,7 @@ public class Room {
 				for(WebSocket conn : clients.keySet()) {
 					Client client = clients.get(conn);
 					if(client.getName().equals(name) || client.getName().equals(post.getFrom())) {
-						if (Main.DEBUG && !(validNames(post) && conn.isOpen())) { System.err.println(""); } // TODO: null check and fix error message
+						if (Main.DEBUG && !(validNames(post) && conn.isOpen())) { System.err.println("Either name not valid or connection closed (2)"); } // TODO: null check and fix error message
 						conn.send(post.toString());
 						break;
 					}

@@ -38,9 +38,10 @@ public class Post extends Message {
 	@Override
     public String toString() {
         JSONObject jsonObject = new JSONObject();
-			jsonObject.put(KEY_FROM, from);
-			jsonObject.put(KEY_CONTENT, content);
-			jsonObject.put(KEY_TO, to); // NB: All recipients know all other recipients.
+        jsonObject.put(Message.KEY_TYPE, Message.TYPE_POST);
+        jsonObject.put(KEY_FROM, from);
+        jsonObject.put(KEY_CONTENT, content);
+        jsonObject.put(KEY_TO, to); // NB: All recipients know all other recipients.
         return jsonObject.toJSONString();
     }
 

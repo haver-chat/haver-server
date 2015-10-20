@@ -84,6 +84,9 @@ var Socket = function() {
         case types.LOCATION:
           sendPos();
           break;
+        case types.POST:
+          addMessage(message);
+          break;
         default:
           break;
       }
@@ -103,6 +106,13 @@ var Socket = function() {
       var pos = new Position(send);
     }
     
+    var addMessage = function(message) {
+      console.log("Adding messsage to UL");
+      var li = document.createElement('li');
+      li.innerHTML += message.from + ": " + message.content;
+      document.querySelector('#chat ul li:first-child').insertBefore(li);
+    } 
+    
   }
   
   this.reconnect = function() {
@@ -110,6 +120,11 @@ var Socket = function() {
   }
 }
 
+document.querySelector("form#chat-form").onsubmit = function() {
+  soc.send(soc.types.POST, new Post(document.querySelector("input[name=msg-box]").value));
+  document.querySelector("input[name=msg-box]").value = "";
+  return false;
+}
 
 var soc = new Socket();
 soc.connect();
