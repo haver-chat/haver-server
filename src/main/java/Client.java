@@ -4,12 +4,12 @@ import java.util.List;
 public class Client {
 	// Change to read in from file instead of set in code later.
 	public final static String[] NAMES = {
-		"BlueBattleship", "BlueDog", "BlueTophat", "BlueIron", "BlueRacecar", "BlueShoe", "BlueThimble", "BlueWheelbarrow",
-		"GreenBattleship", "GreenDog", "GreenTophat", "GreenIron", "GreenRacecar", "GreenShoe", "GreenThimble", "GreenWheelbarrow",
-		"OrangeBattleship", "OrangeDog", "OrangeTophat", "OrangeIron", "OrangeRacecar", "OrangeShoe", "OrangeThimble", "OrangeWheelbarrow",
-		"PurpleBattleship", "PurpleDog", "PurpleTophat", "PurpleIron", "PurpleRacecar", "PurpleShoe", "PurpleThimble", "PurpleWheelbarrow",
-		"RedBattleship", "RedDog", "RedTophat", "RedIron", "RedRacecar", "RedShoe", "RedThimble", "RedWheelbarrow",
-		"YellowBattleship", "YellowDog", "YellowTophat", "YellowIron", "YellowRacecar", "YellowShoe", "YellowThimble", "YellowWheelbarrow"};
+			"BlueBattleship", "BlueBoot", "BlueDog", "BlueIron", "BlueRacecar", "BlueThimble", "BlueTophat", "BlueWheelbarrow",
+			"GreenBattleship", "GreenBoot", "GreenDog", "GreenIron", "GreenRacecar", "GreenThimble", "GreenTophat", "GreenWheelbarrow",
+			"OrangeBattleship", "OrangeBoot", "OrangeDog", "OrangeIron", "OrangeRacecar", "OrangeThimble", "OrangeTophat", "OrangeWheelbarrow",
+			"PurpleBattleship", "PurpleBoot", "PurpleDog", "PurpleIron", "PurpleRacecar", "PurpleThimble", "PurpleTophat", "PurpleWheelbarrow",
+			"RedBattleship", "RedBoot", "RedDog", "RedIron", "RedRacecar", "RedThimble", "RedTophat", "RedWheelbarrow",
+			"YellowBattleship", "YellowBoot", "YellowDog", "YellowIron", "YellowRacecar", "YellowThimble", "YellowTophat", "YellowWheelbarrow"};
 	public final static String KEY_NAME = "name"; // Used for POST_REQUEST
 
 	private String name;
