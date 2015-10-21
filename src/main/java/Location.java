@@ -48,6 +48,8 @@ public class Location extends Message {
 	 * @param location
 	 * @return The distance between two locations.
 	 */
+	// TODO: Actually implement this method correctly
+	// This may help: http://www.movable-type.co.uk/scripts/latlong.html
 	public double distanceBetween(Location location) {
 		return Math.sqrt(Math.pow(Math.abs(this.latitude - location.getLatitude()), 2) +
 			Math.pow(Math.abs(this.longitude - location.getLongitude()), 2));

@@ -154,12 +154,12 @@ public class Router extends WebSocketServer {
 	}
 
 	public Room getRoom(Location location) {
-		double closest = -1d;
+		double closest = Double.MAX_VALUE;
 		Room result = null;
 
 		for(Room room : rooms.values()) {
 			if(room.inRange(location)) {
-				double distance = room.getCentre().distanceBetween(location);
+				double distance = room.getCentre().distanceBetween(location); // TODO Get this value passed back from the previous method chain
 				if(distance < closest) {
 					closest = distance;
 					result = room;
