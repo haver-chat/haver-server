@@ -115,12 +115,17 @@ var Socket = function() {
   }
 }
 
-document.querySelector("form#chat-form").onsubmit = function() {
-  var message = trim(document.querySelector("input[name=msg-box]").value);
-  //if (message.length > 0) {
-    soc.send(soc.types.POST, new Post(message));
-    document.querySelector("input[name=msg-box]").value = "";
-  //}
+document.querySelector("form#chat-form").onsubmit = function(e) {
+  e.preventDefault();
+  try {
+    var message = document.querySelector("input[name=msg-box]").value.trim();
+    if (message.length > 0) {
+      soc.send(soc.types.POST, new Post(message));
+      document.querySelector("input[name=msg-box]").value = "";
+    }
+  } catch(exception) {
+    throw new Error(exception.message);
+  }
   return false;
 }
 
