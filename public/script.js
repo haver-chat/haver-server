@@ -1,11 +1,3 @@
-var sendPos = function() {
-  var send = function(pos) {
-    _this.send(_this.types.LOCATION, pos);
-  }
-  var pos = new Position(send);
-}
-
-
 var Position = function(callback) {
   var _this = this;
   this.longitude = 0;
@@ -107,10 +99,13 @@ var Socket = function() {
     }
     
     var addMessage = function(message) {
+      var ul = document.querySelector('#chat ul');
+      var bottom = ul.scrollTop == ul.scrollHeight;
       console.log("Adding messsage to UL");
       var li = document.createElement('li');
-      li.innerHTML += message.from + ": " + message.content;
+      li.innerHTML += "<b>" + escapeHtml(message.from) + "</b>: " + escapeHtml(message.content);
       document.querySelector('#chat ul').appendChild(li);
+      if (bottom) ul.scrollTop = ul.scrollHeight;
     } 
     
   }
@@ -121,10 +116,23 @@ var Socket = function() {
 }
 
 document.querySelector("form#chat-form").onsubmit = function() {
-  soc.send(soc.types.POST, new Post(document.querySelector("input[name=msg-box]").value));
-  document.querySelector("input[name=msg-box]").value = "";
+  var message = trim(document.querySelector("input[name=msg-box]").value);
+  //if (message.length > 0) {
+    soc.send(soc.types.POST, new Post(message));
+    document.querySelector("input[name=msg-box]").value = "";
+  //}
   return false;
 }
+
+var escapeHtml = function(unsafe) {
+  if (typeof unsafe == 'undefined') return;
+  return unsafe
+       .replace(/&/g, "&amp;")
+       .replace(/</g, "&lt;")
+       .replace(/>/g, "&gt;")
+       .replace(/"/g, "&quot;")
+       .replace(/'/g, "&#039;");
+ }
 
 var soc = new Socket();
 soc.connect();

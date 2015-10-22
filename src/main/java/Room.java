@@ -44,7 +44,7 @@ public class Room {
 		clients.put(conn, client);
 		client.setName(generateName()); // After .put to keep thread safe
         centre = recalculateCentre(client.getLocation());
-		send(new Post(client.getName(), "Some message saying a client has arrived"));
+		send(new Post(name, client.getName() + " has arrived"));
 	}
 
 	/**
@@ -71,7 +71,7 @@ public class Room {
         Client client = clients.get(conn);
 		freeNames.add(client.getName()); // Before .remove to keep thread safe
 		clients.remove(conn);
-		send(new Post(client.getName(), "Some message saying a client has d/c'ed"));
+		send(new Post(name, client.getName() + " has departed"));
 	}
 
 	/**
