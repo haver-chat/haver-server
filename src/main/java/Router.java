@@ -43,7 +43,7 @@ public class Router extends WebSocketServer {
 		Client client = clients.get(conn);
 		clients.remove(conn);
         if (rooms.get(client) != null) {
-            rooms.get(client).close(client);
+            rooms.get(client).close(conn);
             rooms.remove(client);
         }
         System.out.println("Connection closed: " + conn);
@@ -79,7 +79,7 @@ public class Router extends WebSocketServer {
 						if (room.inRange(client.getLocation())) {
 							room.updateLocation(client, new Location(jsonObject));
 						} else {
-							room.close(client);
+							room.close(conn);
 							Location location = new Location(jsonObject);
 							client.setLocation(location);
 							rooms.replace(client, getRoom(location));
@@ -156,7 +156,6 @@ public class Router extends WebSocketServer {
 	public Room getRoom(Location location) {
 		double closest = Double.MAX_VALUE;
 		Room result = null;
-
 		for(Room room : rooms.values()) {
 			if(room.inRange(location)) {
 				double distance = room.getCentre().distanceBetween(location); // TODO Get this value passed back from the previous method chain

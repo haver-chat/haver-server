@@ -41,9 +41,9 @@ public class Room {
 	 * @param client The Client to be added.
 	 */
 	public void addClient(WebSocket conn, Client client) {
-		centre = recalculateCentre(client.getLocation());
 		clients.put(conn, client);
 		client.setName(generateName()); // After .put to keep thread safe
+        centre = recalculateCentre(client.getLocation());
 		send(new Post(client.getName(), "Some message saying a client has arrived"));
 	}
 
@@ -65,11 +65,12 @@ public class Room {
 	/**
 	 * Handler method for connection close.
 	 *
-	 * @param client The client whose connection has closed.
+	 * @param conn The socket which has been closed.
 	 */
-	public void close(Client client) {
+	public void close(WebSocket conn) {
+        Client client = clients.get(conn);
 		freeNames.add(client.getName()); // Before .remove to keep thread safe
-		clients.remove(client);
+		clients.remove(conn);
 		send(new Post(client.getName(), "Some message saying a client has d/c'ed"));
 	}
 
@@ -84,7 +85,7 @@ public class Room {
 
 		if (post.getTo().size() == 0) {
 			for (WebSocket conn : clients.keySet()) {
-				if (Main.DEBUG && !(validNames(post) && conn.isOpen())) { System.err.println("Either name not valid or connection closed"); } // TODO: null check and fix error message
+				if (Main.DEBUG && !(validNames(post) && conn.isOpen())) { System.err.println("Room:send() : Either name not valid or connection closed"); } // TODO: null check and fix error message
 				conn.send(post.toString());
 			}
 		} else {
@@ -92,7 +93,7 @@ public class Room {
 				for(WebSocket conn : clients.keySet()) {
 					Client client = clients.get(conn);
 					if(client.getName().equals(name) || client.getName().equals(post.getFrom())) {
-						if (Main.DEBUG && !(validNames(post) && conn.isOpen())) { System.err.println("Either name not valid or connection closed (2)"); } // TODO: null check and fix error message
+						if (Main.DEBUG && !(validNames(post) && conn.isOpen())) { System.err.println("Room:send() : Either name not valid or connection closed (2)"); } // TODO: null check and fix error message
 						conn.send(post.toString());
 						break;
 					}
@@ -145,11 +146,17 @@ public class Room {
 	 * Averages all the clients' locations.
 	 * Accuracy is ignored.
 	 *
-	 * @param newLocation The Location of the new Client.
+	 * @param location The Location of the new Client.
 	 */
-	private Location recalculateCentre(Location newLocation) {
-		return new Location(centre.getLatitude() + (newLocation.getLatitude() / clients.size()),
-				centre.getLongitude() + (newLocation.getLongitude() / clients.size()));
+	private Location recalculateCentre(Location location) {
+        if (centre == null) {
+            return location;
+        } else {
+            return new Location(
+                    ((centre.getLatitude() * (clients.size()-1)) + location.getLatitude()) / clients.size(),
+                    ((centre.getLongitude() * (clients.size()-1)) + location.getLongitude()) / clients.size()
+            );
+        }
 	}
 
 	/**
@@ -173,7 +180,7 @@ public class Room {
 	 * @return True if the specified location is within the radius of the room.
 	 */
 	public boolean inRange(Location location) {
-		return centre.distanceBetween(location) <= radius;
+        return centre.distanceBetween(location) <= radius;
 	}
 
 	/**
