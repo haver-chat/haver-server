@@ -60,8 +60,8 @@ var Socket = function() {
   
   this.connect = function() {
     var protocol = location.protocol.split('http').join('ws') + '//';
-    _this.socket = new WebSocket(protocol + location.host + ':8080');
-    //_this.socket = new WebSocket('ws://127.0.0.1:8080');
+    var host = (protocol == "file://") ? 'ws://127.0.0.1:8080' : protocol + location.host + ':8080';
+    _this.socket = new WebSocket(host);
     
     _this.socket.onopen = function() {
       sendPos();

@@ -18,8 +18,6 @@ import java.util.HashMap;
 public class Router extends WebSocketServer {
 
 	private final static JSONParser parser = new JSONParser();
-    private final static String HOSTNAME = "localhost";
-	private final static int PORT = 8080;
 	private HashMap<WebSocket, Client> clients = new HashMap<>();
 	private HashMap<Client, Room> rooms = new HashMap<>();
 
@@ -27,8 +25,8 @@ public class Router extends WebSocketServer {
 	/**
 	 * @throws UnknownHostException Config dun goof'd.
 	 */
-	public Router() throws UnknownHostException {
-		super(new InetSocketAddress(HOSTNAME, PORT));
+	public Router(String hostname, int port) throws UnknownHostException {
+		super(new InetSocketAddress(hostname, port));
 	}
 
 	@Override
