@@ -11,3 +11,4 @@ gradle/
 .jar
 gradlew
 gradlew.bat
+config.txt
