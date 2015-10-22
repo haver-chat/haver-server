@@ -5,7 +5,7 @@ public class RoomInfo extends Message {
 	public final static String KEY_NAME = "name";
 	public final static String KEY_RADIUS = "radius";
 	public final static double RADIUS_MAX = 1000d; // TODO Decide on value
-	public final static double RADIUS_MIN = 20d; // TODO Decide on value
+	public final static double RADIUS_MIN = 100d; // TODO Decide on value
 
 	public final String name;
 	public final double radius;

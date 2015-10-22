@@ -50,14 +50,36 @@ public class Location extends Message {
 	 */
 	// TODO: Actually implement this method correctly
 	// This may help: http://www.movable-type.co.uk/scripts/latlong.html
-	public double distanceBetween(Location location) {
+	/*public double distanceBetween(Location location) {
 		double distance =
                 Math.sqrt(
                         Math.pow(this.latitude - location.latitude, 2) +
                         Math.pow(this.longitude - location.longitude, 2)
                 );
 		return distance;
-	}
+	}*/
+
+    /**
+     * Finds distance in meters between 2 locations
+     * Haversine formula
+     * @param location
+     * @return
+     */
+    public double distanceBetween(Location location) {
+        double R = 6378.137;
+        double dLat = (location.latitude - latitude) * Math.PI / 180d;
+        double dLong = (location.longitude - longitude) * Math.PI / 180d;
+        double a =
+                Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(latitude * Math.PI / 180d) *
+                Math.cos(location.latitude * Math.PI / 180d) *
+                Math.sin(dLong/2) * Math.sin(dLong/2);
+        double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        double d = R * c * 1000;
+        System.out.println("Locations are " + d + " meters apart.");
+        return d;
+
+    }
 
 	public double getLatitude() {return latitude;}
 

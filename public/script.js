@@ -60,8 +60,8 @@ var Socket = function() {
   
   this.connect = function() {
     var protocol = location.protocol.split('http').join('ws') + '//';
-    //_this.socket = new WebSocket(protocol + location.host + ':8080');
-    _this.socket = new WebSocket('ws://127.0.0.1:8080');
+    _this.socket = new WebSocket(protocol + location.host + ':8080');
+    //_this.socket = new WebSocket('ws://127.0.0.1:8080');
     
     _this.socket.onopen = function() {
       sendPos();
@@ -78,7 +78,7 @@ var Socket = function() {
       var types = _this.types;
       switch(message.type) {
         case types.ROOM_INFO:
-          var room = new RoomInfo("Bingo!", 20);
+          var room = new RoomInfo("Bingo!", 100);
           _this.send(_this.types.ROOM_INFO, room);
           break;
         case types.LOCATION:
@@ -110,7 +110,7 @@ var Socket = function() {
       console.log("Adding messsage to UL");
       var li = document.createElement('li');
       li.innerHTML += message.from + ": " + message.content;
-      document.querySelector('#chat ul li:first-child').insertBefore(li);
+      document.querySelector('#chat ul').appendChild(li);
     } 
     
   }
