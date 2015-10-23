@@ -46,7 +46,7 @@ public class Post extends Message {
     }
 
 	public void setFrom(String from) {
-		if (Main.DEBUG && !(Client.validName(from))) { System.err.println("Post:setFrom() : Name not valid"); } // TODO: null check and fix error message
+		// if (Main.DEBUG && !(Client.validName(from))) { System.err.println("Post:setFrom() : Name not valid"); } // TODO: Name should always be valid since set by server
 		this.from = from;
 	}
 

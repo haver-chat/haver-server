@@ -70,7 +70,7 @@ var Socket = function() {
       var types = _this.types;
       switch(message.type) {
         case types.ROOM_INFO:
-          var room = new RoomInfo("Bingo!", 100);
+          var room = new RoomInfo("Essentials Queue", 150);
           _this.send(_this.types.ROOM_INFO, room);
           break;
         case types.LOCATION:
@@ -99,13 +99,12 @@ var Socket = function() {
     }
     
     var addMessage = function(message) {
-      var ul = document.querySelector('#chat ul');
-      var bottom = ul.scrollTop == ul.scrollHeight;
+      var bottom = document.body.scrollTop + window.innerHeight == document.body.scrollHeight;
       console.log("Adding messsage to UL");
       var li = document.createElement('li');
       li.innerHTML += "<b>" + escapeHtml(message.from) + "</b>: " + escapeHtml(message.content);
       document.querySelector('#chat ul').appendChild(li);
-      if (bottom) ul.scrollTop = ul.scrollHeight;
+      if (bottom) document.body.scrollTop = document.body.scrollHeight - window.innerHeight;
     } 
     
   }
@@ -137,7 +136,7 @@ var escapeHtml = function(unsafe) {
        .replace(/>/g, "&gt;")
        .replace(/"/g, "&quot;")
        .replace(/'/g, "&#039;");
- }
+}
 
 var soc = new Socket();
 soc.connect();

@@ -44,6 +44,7 @@ public class Room {
 		clients.put(conn, client);
 		client.setName(generateName()); // After .put to keep thread safe
         centre = recalculateCentre(client.getLocation());
+		send(new Post(name, "Welcome to " + name + ", " + client.getName(), Arrays.asList(client.getName())));
 		send(new Post(name, client.getName() + " has arrived"));
 	}
 
@@ -85,7 +86,7 @@ public class Room {
 
 		if (post.getTo().size() == 0) {
 			for (WebSocket conn : clients.keySet()) {
-				if (Main.DEBUG && !(validNames(post) && conn.isOpen())) { System.err.println("Room:send() : Either name not valid or connection closed"); } // TODO: null check and fix error message
+				if (Main.DEBUG && !(validNames(post.getTo()) && conn.isOpen())) { System.err.println("Room:send() : Either name not valid or connection closed"); } // TODO: null check and fix error message
 				conn.send(post.toString());
 			}
 		} else {
@@ -93,7 +94,7 @@ public class Room {
 				for(WebSocket conn : clients.keySet()) {
 					Client client = clients.get(conn);
 					if(client.getName().equals(name) || client.getName().equals(post.getFrom())) {
-						if (Main.DEBUG && !(validNames(post) && conn.isOpen())) { System.err.println("Room:send() : Either name not valid or connection closed (2)"); } // TODO: null check and fix error message
+						if (Main.DEBUG && !(validNames(post.getTo()) && conn.isOpen())) { System.err.println("Room:send() : Either name not valid or connection closed (2)"); } // TODO: null check and fix error message
 						conn.send(post.toString());
 						break;
 					}
@@ -225,15 +226,5 @@ public class Room {
 			if(!validName(name)) {return false;}
 		}
 		return true;
-	}
-
-	/**
-	 * Checks if the sender and receivers of a Post are in this Room.
-	 *
-	 * @param post The Post containing names to verify.
-	 * @return True if all the names are being used in the room.
-	 */
-	public boolean validNames(Post post) {
-		return validName(post.getFrom()) && validNames(post.getTo());
 	}
 }

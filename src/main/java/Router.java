@@ -85,7 +85,7 @@ public class Router extends WebSocketServer {
 						break;
 
 					case Message.TYPE_POST:
-                        jsonObject.put(Post.KEY_FROM, client.getName());
+                        jsonObject.put(Post.KEY_FROM, client.getName()); // TODO: Check jsonObject has no KEY_FROM
 						room.send(new Post(jsonObject));
 						break;
 
