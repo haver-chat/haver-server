@@ -94,22 +94,22 @@ public class Location extends Message {
 
 	/**
 	 * @param message
-	 * @return True if the location is valid
+	 * @return True if the Location is valid
 	 */
 	@Override
 	public boolean valid(JSONObject message) {
 		double latitude;
 		double longitude;
 		return super.valid(message) &&
-			message.get(KEY_LATITUDE) instanceof Long &&
+			message.get(KEY_LATITUDE) instanceof Number &&
 			(latitude = (Message.numberFromJson(message, KEY_LATITUDE))) >= LATITUDE_MIN &&
 			latitude <= LATITUDE_MAX &&
 
-			message.get(KEY_LONGITUDE) instanceof Long &&
+			message.get(KEY_LONGITUDE) instanceof Number &&
 			(longitude = (Message.numberFromJson(message, KEY_LONGITUDE))) >= LONGITUDE_MIN &&
 			longitude <= LONGITUDE_MAX &&
 
-			message.get(KEY_ACCURACY) instanceof Long &&
+			message.get(KEY_ACCURACY) instanceof Number &&
 			Message.numberFromJson(message, KEY_ACCURACY) >= ACCURACY_MIN;
 	}
 }

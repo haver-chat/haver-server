@@ -69,7 +69,7 @@ public class Router extends WebSocketServer {
 
 		try {
 			JSONObject jsonObject = (JSONObject) parser.parse(message);
-			int type = ((Long) jsonObject.get(Location.KEY_TYPE)).intValue();
+			int type = ((Long) jsonObject.get(Location.KEY_TYPE)).intValue(); // TODO move casting to Message
 
 			if (room != null) {
 				switch (type) {

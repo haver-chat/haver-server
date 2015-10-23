@@ -12,6 +12,7 @@ public abstract class Message {
 	public final static int TYPE_LOCATION = 0;
 	public final static int TYPE_POST = 1;
     public final static int TYPE_ROOM_INFO = 2;
+	public final static int TYPE_CLIENT_INFO = 3;
 	public final static String KEY_TYPE = "type";
 	public final static String ROOM_INFO_REQUEST = "{\"" + KEY_TYPE + "\": " + TYPE_ROOM_INFO + '}';
 	public final static String LOCATION_REQUEST = "{\"" + KEY_TYPE + "\": " + TYPE_LOCATION + '}';
@@ -23,7 +24,7 @@ public abstract class Message {
 	 */
 	public boolean valid(JSONObject message) {
 		int type;
-		return message.get(KEY_TYPE) instanceof Long &&
+		return message.get(KEY_TYPE) instanceof Number &&
 			((type = ((Long) message.get(KEY_TYPE)).intValue()) == TYPE_ROOM_INFO ||
 			type == TYPE_LOCATION ||
 			type == TYPE_POST);
@@ -75,11 +76,10 @@ public abstract class Message {
         }
     }
 
-    @SuppressWarnings("unchecked") // TODO: fix :^)
     protected static List<String> listFromJson(JSONObject object, String key) {
         Object value = object.get(key);
         if (value instanceof List) {
-            return (List<String>)value;
+            return (List<String>) value; // TODO: Make this cast safe. Perhaps make generic, then safe cast elsewhere?
         } else {
             System.out.println("Error in parseJSON");
             List<String> list = new ArrayList<>();

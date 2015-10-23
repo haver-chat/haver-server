@@ -42,7 +42,7 @@ public class RoomInfo extends Message {
 			message.get(KEY_NAME) instanceof String &&
             (Message.stringFromJson(message, KEY_NAME)).length() > 0 &&
 
-			message.get(KEY_RADIUS) instanceof Long &&
+			message.get(KEY_RADIUS) instanceof Number &&
 			validRadius(Message.numberFromJson(message, KEY_RADIUS));
 	}
 

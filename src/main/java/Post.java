@@ -2,6 +2,7 @@ import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Post extends Message {
 
@@ -57,7 +58,7 @@ public class Post extends Message {
 
 	public void setTo(List<String> to) {
 		if (Main.DEBUG && !(Client.validNames(to))) { System.err.println("Post:setTo() : Names not in list"); } // TODO: null check and fix error message
-		this.to = to;
+		this.to = to.stream().distinct().collect(Collectors.toList());
 	}
 
 	public void setTo(String to) {
@@ -74,6 +75,9 @@ public class Post extends Message {
 		return content;
 	}
 
+	/**
+	 * @return
+	 */
 	public List<String> getTo() {
 		return to;
 	}
@@ -84,10 +88,6 @@ public class Post extends Message {
 	 */
 	@Override
 	public boolean valid(JSONObject message) {
-		String from;
-		String content;
-		String[] to;
-
 		if(!(super.valid(message) &&
 			message.get(KEY_FROM) instanceof String &&
 			Client.validName(Message.stringFromJson(message, KEY_FROM)) &&
@@ -95,11 +95,19 @@ public class Post extends Message {
 			message.get(KEY_CONTENT) instanceof String &&
 			Message.stringFromJson(message, KEY_CONTENT).length() > 0 &&
 
-			message.get(KEY_TO) instanceof String[])) {return false;}
+			message.get(KEY_TO) instanceof List)) {return false;}
 
+		// TODO: REMOVE DUPE CODE
+		List to;
 		// Correctly allows for an empty array
-		for(String name : (String[]) message.get(KEY_TO)) {
-			if(!Client.validName(name)) {return false;}
+		if((to = ((List) message.get(KEY_TO))).size() == 0) {return true;} // Empty Lists are safe
+		if(to.size() > Client.NAMES.length) {return false;} // Cannot be larger than room max size
+		// ONLY check contents of To array below here
+
+		// TODO: Move element type verification elsewhere
+		for(Object name : to.stream().distinct().toArray()) { // To remove DOS attack chance. Uniqueness is enforced in setTo().
+			if(!(name instanceof String)) {return false;}
+			if(!Client.validName((String) (name))) {return false;}
 		}
 
 		return true;
