@@ -20,7 +20,7 @@ public class RoomInfo extends Message {
 		// TODO Check if this errors
 		this(
 				Message.stringFromJson(jsonObject, KEY_NAME),
-				Message.numberFromJson(jsonObject, KEY_RADIUS)
+				Message.doubleFromJson(jsonObject, KEY_RADIUS)
 		);
 	}
 
@@ -43,7 +43,7 @@ public class RoomInfo extends Message {
             (Message.stringFromJson(message, KEY_NAME)).length() > 0 &&
 
 			message.get(KEY_RADIUS) instanceof Number &&
-			validRadius(Message.numberFromJson(message, KEY_RADIUS));
+			validRadius(Message.doubleFromJson(message, KEY_RADIUS));
 	}
 
 	/**

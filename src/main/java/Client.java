@@ -10,7 +10,6 @@ public class Client {
 			"PurpleBattleship", "PurpleBoot", "PurpleDog", "PurpleIron", "PurpleRacecar", "PurpleThimble", "PurpleTophat", "PurpleWheelbarrow",
 			"RedBattleship", "RedBoot", "RedDog", "RedIron", "RedRacecar", "RedThimble", "RedTophat", "RedWheelbarrow",
 			"YellowBattleship", "YellowBoot", "YellowDog", "YellowIron", "YellowRacecar", "YellowThimble", "YellowTophat", "YellowWheelbarrow"};
-	public final static String KEY_NAME = "name"; // Used for POST_REQUEST
 
 	private String name;
 	private Location location;

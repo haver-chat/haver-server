@@ -1,6 +1,7 @@
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,12 +25,16 @@ public class Post extends Message {
         this(from, content, new ArrayList<>());
     }
 
+	/**
+	 * @precondition This is a valid Post.
+	 *
+	 * @param jsonObject
+	 */
 	public Post(JSONObject jsonObject) {
-		// TODO Check if this errors
 		this(
                 Message.stringFromJson(jsonObject, KEY_FROM),
                 Message.stringFromJson(jsonObject, KEY_CONTENT),
-                Message.listFromJson(jsonObject, KEY_TO)
+				Message.listFromJson(jsonObject, KEY_TO)
         );
 	}
 
@@ -47,7 +52,7 @@ public class Post extends Message {
     }
 
 	public void setFrom(String from) {
-		// if (Main.DEBUG && !(Client.validName(from))) { System.err.println("Post:setFrom() : Name not valid"); } // TODO: Name should always be valid since set by server
+		// if (Main.DEBUG && !(Client.validName(from))) { System.err.println("Post:setFrom() : Name not valid"); } // Name should always be valid since set by server
 		this.from = from;
 	}
 
@@ -56,6 +61,10 @@ public class Post extends Message {
 		return this.content;
 	}
 
+	/**
+	 * Enforces name uniqueness.
+	 * @param to
+	 */
 	public void setTo(List<String> to) {
 		if (Main.DEBUG && !(Client.validNames(to))) { System.err.println("Post:setTo() : Names not in list"); } // TODO: null check and fix error message
 		this.to = to.stream().distinct().collect(Collectors.toList());
@@ -88,28 +97,14 @@ public class Post extends Message {
 	 */
 	@Override
 	public boolean valid(JSONObject message) {
-		if(!(super.valid(message) &&
-			message.get(KEY_FROM) instanceof String &&
-			Client.validName(Message.stringFromJson(message, KEY_FROM)) &&
+		return super.valid(message) &&
+				message.get(KEY_FROM) instanceof String &&
+				Client.validName(Message.stringFromJson(message, KEY_FROM)) &&
 
-			message.get(KEY_CONTENT) instanceof String &&
-			Message.stringFromJson(message, KEY_CONTENT).length() > 0 &&
+				message.get(KEY_CONTENT) instanceof String &&
+				Message.stringFromJson(message, KEY_CONTENT).length() > 0 &&
 
-			message.get(KEY_TO) instanceof List)) {return false;}
-
-		// TODO: REMOVE DUPE CODE
-		List to;
-		// Correctly allows for an empty array
-		if((to = ((List) message.get(KEY_TO))).size() == 0) {return true;} // Empty Lists are safe
-		if(to.size() > Client.NAMES.length) {return false;} // Cannot be larger than room max size
-		// ONLY check contents of To array below here
-
-		// TODO: Move element type verification elsewhere
-		for(Object name : to.stream().distinct().toArray()) { // To remove DOS attack chance. Uniqueness is enforced in setTo().
-			if(!(name instanceof String)) {return false;}
-			if(!Client.validName((String) (name))) {return false;}
-		}
-
-		return true;
+				message.get(KEY_TO) instanceof List &&
+				validListOfNames(Message.listFromJson(message, KEY_TO));
 	}
 }

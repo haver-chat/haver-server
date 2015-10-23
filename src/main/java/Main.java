@@ -2,9 +2,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 
-/**
- * Created by azertify on 20/10/15.
- */
 public class Main {
     public static final boolean DEBUG = true;
     private static final String CONFIG = "config.txt";

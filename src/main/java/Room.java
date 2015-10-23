@@ -4,6 +4,7 @@ import java.util.*;
 
 /**
  * A location-based chat room.
+ * Maximum size is defined by Client.NAMES.length.
  */
 public class Room {
 
@@ -44,8 +45,8 @@ public class Room {
 		clients.put(conn, client);
 		client.setName(generateName()); // After .put to keep thread safe
         centre = recalculateCentre(client.getLocation());
-		send(new Post(name, "Welcome to " + name + ", " + client.getName(), Arrays.asList(client.getName())));
-		send(new Post(name, client.getName() + " has arrived"));
+		conn.send(ClientInfo.toString(name, client.getName(), true, clients.values()));
+		conn.send(ClientInfo.toString(true, client.getName()));
 	}
 
 	/**
@@ -72,7 +73,7 @@ public class Room {
         Client client = clients.get(conn);
 		freeNames.add(client.getName()); // Before .remove to keep thread safe
 		clients.remove(conn);
-		send(new Post(name, client.getName() + " has departed"));
+		conn.send(ClientInfo.toString(false, client.getName()));
 	}
 
 	/**
@@ -134,9 +135,9 @@ public class Room {
 	 */
 	public void updateLocation(Client client, Location location) {
 		if (client.isValid()) {
-			Location oldLocation = client.getLocation();
+			//Location oldLocation = client.getLocation();
 			client.setLocation(location);
-			centre = recalculateCentre(oldLocation, location);
+			//centre = recalculateCentre(oldLocation, location);
 		} else {
 			// Client dun goof'd?
 		}

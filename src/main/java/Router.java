@@ -147,7 +147,7 @@ public class Router extends WebSocketServer {
             rooms.put(client, room);
         }
 		room.addClient(conn, client);
-		conn.send(Message.postRequestFactory(client.getName())); // Receipt of a Post request tells the Client it has been allocated to a valid room
+		conn.send(Message.POST_REQUEST); // Receipt of a Post request tells the Client it has been allocated to a valid room
         System.out.println("Added conn to room ["+conn+"]: <post request>");
 	}
 

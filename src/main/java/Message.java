@@ -1,6 +1,5 @@
 import org.json.simple.JSONObject;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -16,7 +15,7 @@ public abstract class Message {
 	public final static String KEY_TYPE = "type";
 	public final static String ROOM_INFO_REQUEST = "{\"" + KEY_TYPE + "\": " + TYPE_ROOM_INFO + '}';
 	public final static String LOCATION_REQUEST = "{\"" + KEY_TYPE + "\": " + TYPE_LOCATION + '}';
-	private final static String POST_REQUEST_START = "{\"" + KEY_TYPE + "\": " + TYPE_POST + ", \"" + Client.KEY_NAME + "\": ";
+	public final static String POST_REQUEST = "{\"" + KEY_TYPE + "\": " + TYPE_POST + '}';
 
 	/**
 	 * @param message
@@ -31,61 +30,57 @@ public abstract class Message {
 	}
 
 	/**
-	 * Constructs and returns a stringified Post Request with the specified name.
 	 *
-	 * @param name The name that has been assigned to the client.
-	 * @return Stringified JSON with TYPE_POST and the specified name.
+	 * NB: Does not enforce unique names. This should be enforced when storing the List (see: {@link Post#setTo(List) Post:setTo(List}).
+	 * @param names
+	 * @return True if the List is empty or all elements are valid names. False if List is longer than room max size.
 	 */
-	public static String postRequestFactory(String name) {
-		return POST_REQUEST_START + "\"" + name + "\"}";
-	}
+	public boolean validListOfNames(List names) {
+		// Correctly allows for an empty array
+		if(names.size() == 0) {return true;} // Empty Lists are safe
+		if(names.size() > Client.NAMES.length) {return false;} // Cannot be larger than room max size
+		// ONLY check contents below here
 
-	public static double parseJSON(Object o) {
-		if (o instanceof Double) {
-			return (double)o;
-		} else if (o instanceof Long) {
-			return ((Long)o).doubleValue();
-		} else {
-			System.out.println("Error in parseJSON");
-			return -1D;
-			// throw new YouDunGoofedException('lolwut');
+		for(Object name : names.stream().distinct().toArray()) { // To remove DOS attack chance.
+			if (!(name instanceof String)) {return false;}
+			if (!Client.validName((String) (name))) {return false;}
 		}
+		return true;
 	}
 
-    protected static double numberFromJson(JSONObject object, String key) {
-        Object value = object.get(key);
-        if (value instanceof Double) {
-            return (double)value;
-        } else if (value instanceof Long) {
-            return ((Long)value).doubleValue();
-        } else {
-            System.out.println("Error in parseJSON");
-            return -1D;
-            // throw new YouDunGoofedException('lolwut');
-        }
+	/**
+	 * Helper method that encapsulates the casting of Numbers from JSONObjects.
+	 *
+	 * @precondition jsonObject must contain key of type Number.
+	 * @param jsonObject The entire JSONObject containing the key/value pair to extract and cast.
+	 * @param key The key that maps to a Number in the jsonObject.
+	 * @return The specified value as a double.
+	 */
+    protected static double doubleFromJson(JSONObject jsonObject, String key) {
+		return ((Number) jsonObject.get(key)).doubleValue();
     }
 
-    protected static String stringFromJson(JSONObject object, String key) {
-        Object value = object.get(key);
-        if (value instanceof String) {
-            return (String)value;
-        } else {
-            System.out.println("Error in parseJSON");
-            return String.valueOf(-1D);
-            // throw new YouDunGoofedException('lolwut');
-        }
+	/**
+	 * Helper method that encapsulates the casting of Strings from JSONObjects.
+	 *
+	 * @precondition jsonObject must contain key of type String.
+	 * @param jsonObject The entire JSONObject containing the key/value pair to extract and cast.
+	 * @param key The key that maps to a String in the jsonObject.
+	 * @return The specified value as a String.
+	 */
+    protected static String stringFromJson(JSONObject jsonObject, String key) {
+		return (String) jsonObject.get(key);
     }
 
-    protected static List<String> listFromJson(JSONObject object, String key) {
-        Object value = object.get(key);
-        if (value instanceof List) {
-            return (List<String>) value; // TODO: Make this cast safe. Perhaps make generic, then safe cast elsewhere?
-        } else {
-            System.out.println("Error in parseJSON");
-            List<String> list = new ArrayList<>();
-            list.add(String.valueOf(-1D));
-            return list;
-            // throw new YouDunGoofedException('lolwut');
-        }
+	/**
+	 * Helper method that encapsulates the casting of Lists from JSONObjects.
+	 *
+	 * @precondition jsonObject must contain key of type List.
+	 * @param jsonObject The entire JSONObject containing the key/value pair to extract and cast.
+	 * @param key The key that maps to a List in the jsonObject.
+	 * @return The specified value as a List.
+	 */
+    protected static List listFromJson(JSONObject jsonObject, String key) {
+        return (List) jsonObject.get(key);
     }
 }
