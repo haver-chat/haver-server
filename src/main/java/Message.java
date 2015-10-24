@@ -46,6 +46,8 @@ public abstract class Message {
 	public final static String POST_REQUEST = "{\"" + Key.TYPE + "\": " + Type.POST + '}';
 
 	public static Type getType(JSONObject message) {
+        if (!message.containsKey(Key.TYPE.key)) System.err.println("Message:getType : Key not found");
+        if (!(message.get(Key.TYPE.key) instanceof Number)) System.err.println("Message:getType : GFDI");
         if (message.containsKey(Key.TYPE) && message.get(Key.TYPE) instanceof Number) {
             int typeNumber = intFromJson(message, Key.TYPE);
             for (Type type : Type.values()) {

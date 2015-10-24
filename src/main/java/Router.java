@@ -67,8 +67,10 @@ public class Router extends WebSocketServer {
 		System.out.println("Message from [" + conn + "]: " + message);
 
 		JSONObject jsonObject = Message.jsonFromString(message);
+        if (Main.DEBUG && jsonObject == null) System.err.println("Router:onMessage : jsonObject is null");
 		if (jsonObject == null) return; // invalid JSON
 		Message.Type type = Message.getType(jsonObject);
+        if (Main.DEBUG && type == null) System.err.println("Router:onMessage : type is null");
 		if (type == null) return; // invalid type
 
 		if (room != null) {
