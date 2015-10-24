@@ -70,15 +70,17 @@ var Socket = function() {
       console.log(message);
       var types = _this.types;
       switch(message.type) {
-        case types.ROOM_INFO:
-          var room = new RoomInfo("Essentials Queue", 150);
-          _this.send(_this.types.ROOM_INFO, room);
-          break;
         case types.LOCATION:
           sendPos();
           break;
         case types.POST:
           addMessage(message);
+          break;
+        case types.ROOM_INFO:
+          var room = new RoomInfo("Essentials Queue", 150);
+          _this.send(_this.types.ROOM_INFO, room);
+          break;
+        case types.CLIENT_INFO:
           break;
         default:
           break;
