@@ -89,9 +89,8 @@ public class ClientInfo extends Message {
 	 * @param message
 	 * @return True if the ClientInfo is valid
 	 */
-	@Override
 	public boolean valid(JSONObject message) { // Will this ever be called? Since we don't receive a ClientInfo from the client ever.
-		return super.valid(message) &&
+		return
 
 				(!message.containsKey(KEY_ROOM_NAME) ||
 						(message.get(KEY_ROOM_NAME) instanceof String &&

@@ -10,18 +10,27 @@ public class RoomInfo extends Message {
 	public final String name;
 	public final double radius;
 
-
 	public RoomInfo(String name, double radius) {
 		this.name = name;
 		this.radius = radius;
 	}
 
-	public RoomInfo(JSONObject jsonObject) {
-		// TODO Check if this errors
-		this(
-				Message.stringFromJson(jsonObject, KEY_NAME),
-				Message.doubleFromJson(jsonObject, KEY_RADIUS)
-		);
+	public static RoomInfo fromJSON(JSONObject jsonObject) {
+        try {
+            if (jsonObject.size() != 3) throw new Exception("Wrong number of keys");
+            if (!(jsonObject.containsKey(KEY_NAME) && jsonObject.containsKey(KEY_RADIUS)))
+                throw new Exception("Wrong keys");
+            if (!(jsonObject.get(KEY_NAME) instanceof String && jsonObject.get(KEY_RADIUS) instanceof Number))
+                throw new Exception("Values are wrong type");
+            String name = Message.stringFromJson(jsonObject, KEY_NAME);
+            double radius = Message.doubleFromJson(jsonObject, KEY_RADIUS);
+            if (!(name.length() > 0 && validRadius(radius))) throw new Exception("Values' content is invalid");
+
+            return new RoomInfo(name, radius);
+        } catch(Exception e) {
+            System.err.println("RoomInfo:fromJSON : " + e.getMessage());
+            return null;
+        }
 	}
 
 	public String getName() {
@@ -30,20 +39,6 @@ public class RoomInfo extends Message {
 
 	public double getRadius() {
 		return radius;
-	}
-
-	/**
-	 * @param message
-	 * @return True if the RoomInfo is valid
-	 */
-	@Override
-	public boolean valid(JSONObject message) {
-		return super.valid(message) &&
-			message.get(KEY_NAME) instanceof String &&
-            (Message.stringFromJson(message, KEY_NAME)).length() > 0 &&
-
-			message.get(KEY_RADIUS) instanceof Number &&
-			validRadius(Message.doubleFromJson(message, KEY_RADIUS));
 	}
 
 	/**

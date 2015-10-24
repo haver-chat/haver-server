@@ -1,5 +1,7 @@
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,6 +14,7 @@ public abstract class Message {
 	public final static int TYPE_POST = 1;
     public final static int TYPE_ROOM_INFO = 2;
 	public final static int TYPE_CLIENT_INFO = 3;
+    public final static int[] TYPES = {TYPE_LOCATION, TYPE_POST, TYPE_ROOM_INFO, TYPE_CLIENT_INFO};
 	public final static String KEY_TYPE = "type";
 	public final static String ROOM_INFO_REQUEST = "{\"" + KEY_TYPE + "\": " + TYPE_ROOM_INFO + '}';
 	public final static String LOCATION_REQUEST = "{\"" + KEY_TYPE + "\": " + TYPE_LOCATION + '}';
@@ -21,13 +24,27 @@ public abstract class Message {
 	 * @param message
 	 * @return True if the message is valid.
 	 */
-	public boolean valid(JSONObject message) {
-		int type;
-		return message.get(KEY_TYPE) instanceof Number &&
-			((type = ((Long) message.get(KEY_TYPE)).intValue()) == TYPE_ROOM_INFO ||
-			type == TYPE_LOCATION ||
-			type == TYPE_POST);
+	public static int getType(JSONObject message) {
+        if (message.containsKey(KEY_TYPE) && message.get(KEY_TYPE) instanceof Number) {
+            int type = intFromJson(message, KEY_TYPE);
+            for (int i : TYPES) {
+                if (type == i) return type;
+            }
+        }
+        return -1;
 	}
+
+
+    public static JSONObject jsonFromString(String jsonString) {
+        try {
+            return (JSONObject) Router.parser.parse(jsonString);
+        } catch(ParseException e) {
+            if (Main.DEBUG) {
+                System.err.println("Message:jsonFromString : Parse Exception");
+            }
+            return null;
+        }
+    }
 
 	/**
 	 *
@@ -35,7 +52,7 @@ public abstract class Message {
 	 * @param names
 	 * @return True if the List is empty or all elements are valid names. False if List is longer than room max size.
 	 */
-	public boolean validListOfNames(List names) {
+	public static boolean validListOfNames(List names) {
 		// Correctly allows for an empty array
 		if(names.size() == 0) {return true;} // Empty Lists are safe
 		if(names.size() > Client.NAMES.length) {return false;} // Cannot be larger than room max size
@@ -58,6 +75,18 @@ public abstract class Message {
 	 */
     protected static double doubleFromJson(JSONObject jsonObject, String key) {
 		return ((Number) jsonObject.get(key)).doubleValue();
+    }
+
+    /**
+     * Helper method that encapsulates the casting of Numbers from JSONObjects.
+     *
+     * @precondition jsonObject must contain key of type Number.
+     * @param jsonObject The entire JSONObject containing the key/value pair to extract and cast.
+     * @param key The key that maps to a Number in the jsonObject.
+     * @return The specified value as a int.
+     */
+    protected static int intFromJson(JSONObject jsonObject, String key) {
+        return ((Number) jsonObject.get(key)).intValue();
     }
 
 	/**

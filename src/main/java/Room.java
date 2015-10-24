@@ -169,6 +169,7 @@ public class Room {
 	 * @param oldLocation The old Location of the Client.
 	 * @param updatedLocation The Client's new Location.
 	 */
+    @Deprecated
 	private Location recalculateCentre(Location oldLocation, Location updatedLocation) {
 		updatedLocation = recalculateCentre(updatedLocation);
 		return new Location(updatedLocation.getLatitude() - (oldLocation.getLatitude() / clients.size()),

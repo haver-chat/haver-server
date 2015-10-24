@@ -1,7 +1,7 @@
 import org.json.simple.JSONObject;
+import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,22 +21,21 @@ public class Post extends Message {
 		setTo(to);
 	}
 
-    public Post(String from, String content) {
-        this(from, content, new ArrayList<>());
+	public static Post fromJSON(Client client, JSONObject jsonObject) {
+        try {
+            if (jsonObject.size() != 3) throw new Exception("Wrong number of keys");
+            if (!(jsonObject.containsKey(KEY_CONTENT) && jsonObject.containsKey(KEY_TO))) throw new Exception("Wrong keys");
+            if (!(jsonObject.get(KEY_CONTENT) instanceof String && jsonObject.get(KEY_TO) instanceof List))
+                throw new Exception("Values are wrong type");
+            String content = Message.stringFromJson(jsonObject, KEY_CONTENT);
+            List<String> to = Message.listFromJson(jsonObject, KEY_TO);
+            if (!(content.length() > 0 && validListOfNames(to))) throw new Exception("Values' content is invalid");
+            return new Post(client.getName(), content, to);
+        } catch(Exception e) {
+            System.err.println("Post:fromJSON : " + e.getMessage());
+            return null;
+        }
     }
-
-	/**
-	 * @precondition This is a valid Post.
-	 *
-	 * @param jsonObject
-	 */
-	public Post(JSONObject jsonObject) {
-		this(
-                Message.stringFromJson(jsonObject, KEY_FROM),
-                Message.stringFromJson(jsonObject, KEY_CONTENT),
-				Message.listFromJson(jsonObject, KEY_TO)
-        );
-	}
 
 	/**
 	 * @return Stringified JSON.
@@ -89,22 +88,5 @@ public class Post extends Message {
 	 */
 	public List<String> getTo() {
 		return to;
-	}
-
-	/**
-	 * @param message
-	 * @return True if the Post is valid
-	 */
-	@Override
-	public boolean valid(JSONObject message) {
-		return super.valid(message) &&
-				message.get(KEY_FROM) instanceof String &&
-				Client.validName(Message.stringFromJson(message, KEY_FROM)) &&
-
-				message.get(KEY_CONTENT) instanceof String &&
-				Message.stringFromJson(message, KEY_CONTENT).length() > 0 &&
-
-				message.get(KEY_TO) instanceof List &&
-				validListOfNames(Message.listFromJson(message, KEY_TO));
 	}
 }

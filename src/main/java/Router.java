@@ -17,7 +17,7 @@ import java.util.HashMap;
  */
 public class Router extends WebSocketServer {
 
-	private final static JSONParser parser = new JSONParser();
+	public final static JSONParser parser = new JSONParser();
 	private HashMap<WebSocket, Client> clients = new HashMap<>();
 	private HashMap<Client, Room> rooms = new HashMap<>();
 
@@ -67,69 +67,70 @@ public class Router extends WebSocketServer {
 		Room room = rooms.get(client);
 		System.out.println("Message from [" + conn + "]: " + message);
 
-		try {
-			JSONObject jsonObject = (JSONObject) parser.parse(message);
-			int type = ((Long) jsonObject.get(Location.KEY_TYPE)).intValue(); // TODO move casting to Message
+		JSONObject jsonObject = Message.jsonFromString(message);
+		if (jsonObject == null) return; // invalid JSON
+		int type = Message.getType(jsonObject);
+		if (type == -1) return; // invalid type
 
-			if (room != null) {
-				switch (type) {
-					case Message.TYPE_LOCATION:
-						if (room.inRange(client.getLocation())) {
-							room.updateLocation(client, new Location(jsonObject));
-						} else {
-							room.close(conn);
-							Location location = new Location(jsonObject);
-							client.setLocation(location);
-							rooms.replace(client, getRoom(location));
-						}
-						break;
-
-					case Message.TYPE_POST:
-                        jsonObject.put(Post.KEY_FROM, client.getName()); // TODO: Check jsonObject has no KEY_FROM
-						room.send(new Post(jsonObject));
-						break;
-
-					default:
-                        System.out.println("Invalid message from ["+conn+"]: <location request>");
-						// Client dun goof'd
-						break;
-				}
-			} else {
-				switch (type) {
-					case Message.TYPE_LOCATION:
-						Location location = new Location(jsonObject);
+		if (room != null) {
+			switch (type) {
+				case Message.TYPE_LOCATION:
+					if (room.inRange(client.getLocation())) {
+                        Location location = Location.fromJSON(jsonObject);
+                        if (location == null) return;
+						room.updateLocation(client, location);
+					} else {
+						room.close(conn);
+                        Location location = Location.fromJSON(jsonObject);
+                        if (location == null) return;
 						client.setLocation(location);
-						room = getRoom(location);
-						if (room != null) {
-							setRoom(conn, client, room);
-						} else {
-							conn.send(Message.ROOM_INFO_REQUEST);
-                            System.out.println("Message to ["+conn+"]: <room info request>");
-						}
-						break;
+						rooms.replace(client, getRoom(location));
+					}
+					break;
 
-					case Message.TYPE_ROOM_INFO:
-						if (client.getLocation() != null) {
-							RoomInfo roomInfo = new RoomInfo(jsonObject);
-							room = new Room(roomInfo, client.getLocation()); // TODO User input is only asserted and not validated properly
-							setRoom(conn, client, room);
-						} else {
-							// Client dun goof'd
-							conn.send(Message.LOCATION_REQUEST);
-                            System.out.println("Invalid room info from ["+conn+"]: <location request>");
-						}
-						break;
+				case Message.TYPE_POST:
+					room.send(Post.fromJSON(client, jsonObject));
+					break;
 
-					default:
+				default:
+					System.out.println("Invalid message from ["+conn+"]: <location request>");
+					// Client dun goof'd
+					break;
+			}
+		} else {
+			switch (type) {
+				case Message.TYPE_LOCATION:
+                    Location location = Location.fromJSON(jsonObject);
+                    if (location == null) return;
+					client.setLocation(location);
+					room = getRoom(location);
+					if (room != null) {
+						setRoom(conn, client, room);
+					} else {
+						conn.send(Message.ROOM_INFO_REQUEST);
+						System.out.println("Message to ["+conn+"]: <room info request>");
+					}
+					break;
+
+				case Message.TYPE_ROOM_INFO:
+					if (client.getLocation() != null) {
+						RoomInfo roomInfo = RoomInfo.fromJSON(jsonObject);
+                        if (roomInfo == null) return;
+						room = new Room(roomInfo, client.getLocation()); // TODO User input is only asserted and not validated properly
+						setRoom(conn, client, room);
+					} else {
 						// Client dun goof'd
 						conn.send(Message.LOCATION_REQUEST);
-                        System.out.println("Invalid message from ["+conn+"]: <location request>");
-						break;
-				}
+						System.out.println("Invalid room info from ["+conn+"]: <location request>");
+					}
+					break;
+
+				default:
+					// Client dun goof'd
+					conn.send(Message.LOCATION_REQUEST);
+					System.out.println("Invalid message from ["+conn+"]: <location request>");
+					break;
 			}
-		} catch(ParseException e) {
-			// Client dun goof'd
-			e.printStackTrace();
 		}
 	}
 

@@ -46,7 +46,8 @@ var Socket = function() {
   this.types = {
     LOCATION: 0,
     POST: 1,
-    ROOM_INFO: 2
+    ROOM_INFO: 2,
+    CLIENT_INFO: 3
   };
   this.send = null;
   
