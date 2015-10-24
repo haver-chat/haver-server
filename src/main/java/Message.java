@@ -45,8 +45,8 @@ public abstract class Message {
 	public final static String LOCATION_REQUEST = "{\"" + Key.TYPE + "\": " + Type.LOCATION + '}';
 	public final static String POST_REQUEST = "{\"" + Key.TYPE + "\": " + Type.POST + '}';
 
-	public static Type getType(JSONObject message) {
-        if (message.containsKey(Key.TYPE) && message.get(Key.TYPE) instanceof Number) {
+	public static Type typeFromJson(JSONObject message) {
+        if (message.containsKey(Key.TYPE.key) && message.get(Key.TYPE.key) instanceof Number) {
             int typeNumber = intFromJson(message, Key.TYPE);
             for (Type type : Type.values()) {
                 if (typeNumber == type.type) return type;
@@ -95,7 +95,7 @@ public abstract class Message {
 	 * @return The specified value as a double.
 	 */
     protected static double doubleFromJson(JSONObject jsonObject, JSONKey key) {
-		return ((Number) jsonObject.get(key)).doubleValue();
+		return ((Number) jsonObject.get(key.toString())).doubleValue();
     }
 
     /**
@@ -107,7 +107,7 @@ public abstract class Message {
      * @return The specified value as a int.
      */
     protected static int intFromJson(JSONObject jsonObject, JSONKey key) {
-        return ((Number) jsonObject.get(key)).intValue();
+        return ((Number) jsonObject.get(key.toString())).intValue();
     }
 
 	/**
@@ -119,7 +119,7 @@ public abstract class Message {
 	 * @return The specified value as a String.
 	 */
     protected static String stringFromJson(JSONObject jsonObject, JSONKey key) {
-		return (String) jsonObject.get(key);
+		return (String) jsonObject.get(key.toString());
     }
 
 	/**
@@ -131,6 +131,6 @@ public abstract class Message {
 	 * @return The specified value as a List.
 	 */
     protected static List listFromJson(JSONObject jsonObject, JSONKey key) {
-        return (List) jsonObject.get(key);
+        return (List) jsonObject.get(key.toString());
     }
 }

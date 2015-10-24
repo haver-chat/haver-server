@@ -68,7 +68,7 @@ public class Router extends WebSocketServer {
 
 		JSONObject jsonObject = Message.jsonFromString(message);
 		if (jsonObject == null) return; // invalid JSON
-		Message.Type type = Message.getType(jsonObject);
+		Message.Type type = Message.typeFromJson(jsonObject);
 		if (type == null) return; // invalid type
 
 		if (room != null) {
