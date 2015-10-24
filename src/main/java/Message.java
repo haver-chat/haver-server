@@ -43,7 +43,6 @@ public abstract class Message {
 
 	public enum Request {
 		LOCATION("{\"" + Key.TYPE + "\": " + Type.ROOM_INFO + '}'),
-		POST("{\"" + Key.TYPE + "\": " + Type.POST + '}'),
 		ROOM_INFO("{\"" + Key.TYPE + "\": " + Type.ROOM_INFO + '}');
 
 		public final String request;

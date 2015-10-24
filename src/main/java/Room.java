@@ -46,7 +46,6 @@ public class Room {
 		client.setName(generateName()); // After .put to keep thread safe
         centre = recalculateCentre(client.getLocation());
 		conn.send(ClientInfo.toString(name, client.getName(), true, clients.values()));
-		conn.send(ClientInfo.toString(true, client.getName()));
 	}
 
 	/**
