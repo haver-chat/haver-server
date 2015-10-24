@@ -1,5 +1,4 @@
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 import java.util.Collection;
 import java.util.List;
@@ -10,10 +9,21 @@ import java.util.List;
  */
 public class ClientInfo extends Message {
 
-	public final static String KEY_ROOM_NAME = "roomName";
-	public final static String KEY_CLIENT_NAME = "clientName";
-	public final static String KEY_CHANGE = "change";
-	public final static String KEY_NAMES = "names";
+	public enum Key implements JSONKey {
+		ROOM_NAME("roomName"),
+		CLIENT_NAME("clientName"),
+		CHANGE("change"),
+		NAMES("names");
+
+		public final String key;
+
+		Key(String key) {
+			this.key = key;
+		}
+
+		@Override
+		public String toString() {return key;}
+	}
 
 	/**
 	 * To be sent to the Client when they join a Room.
@@ -32,11 +42,11 @@ public class ClientInfo extends Message {
 	 */
 	public static String toString(String roomName, String clientName, boolean change, List<String> names) {
 		return "{\"" +
-				KEY_TYPE + "\": " + TYPE_CLIENT_INFO + ", \"" +
-				KEY_ROOM_NAME + "\": " + roomName + ", \"" +
-				KEY_CLIENT_NAME + "\": " + clientName + ", \"" +
-				KEY_CHANGE + "\": " + change + ", \"" +
-				KEY_NAMES + "\":" + JSONArray.toJSONString(names) + "}";
+				Message.Key.TYPE + "\": " + Type.CLIENT_INFO + ", \"" +
+				Key.ROOM_NAME + "\": " + roomName + ", \"" +
+				Key.CLIENT_NAME + "\": " + clientName + ", \"" +
+				Key.CHANGE + "\": " + change + ", \"" +
+				Key.NAMES + "\":" + JSONArray.toJSONString(names) + "}";
 	}
 
 	/**
@@ -56,11 +66,11 @@ public class ClientInfo extends Message {
 	 */
 	public static String toString(String roomName, String clientName, boolean change, Collection<Client> clients) {
 		StringBuilder sb = new StringBuilder("{\"" +
-				KEY_TYPE + "\": " + TYPE_CLIENT_INFO + ", \"" +
-				KEY_ROOM_NAME + "\": \"" + roomName + "\", \"" +
-				KEY_CLIENT_NAME + "\": \"" + clientName + "\", \"" +
-				KEY_CHANGE + "\": " + change + ", \"" +
-				KEY_NAMES + "\":[\"");
+				Message.Key.TYPE + "\": " + Type.CLIENT_INFO + ", \"" +
+				Key.ROOM_NAME + "\": \"" + roomName + "\", \"" +
+				Key.CLIENT_NAME + "\": \"" + clientName + "\", \"" +
+				Key.CHANGE + "\": " + change + ", \"" +
+				Key.NAMES + "\":[\"");
 		for(Client client : clients) {
 			sb.append(client.getName()).append("\", \"");
 		}
@@ -80,26 +90,8 @@ public class ClientInfo extends Message {
 	 */
 	public static String toString(boolean change, String name) {
 		return "{\"" +
-				KEY_TYPE + "\": " + TYPE_CLIENT_INFO + ", \"" +
-				KEY_CHANGE + "\": " + change + ", \"" +
-				KEY_NAMES + "\": \"" + name  + "\"}";
+				Message.Key.TYPE + "\": " + Type.CLIENT_INFO + ", \"" +
+				Key.CHANGE + "\": " + change + ", \"" +
+				Key.NAMES + "\": \"" + name  + "\"}";
 	}
-
-	/**
-	 * @param message
-	 * @return True if the ClientInfo is valid
-	 */
-	public boolean valid(JSONObject message) { // Will this ever be called? Since we don't receive a ClientInfo from the client ever.
-		return
-
-				(!message.containsKey(KEY_ROOM_NAME) ||
-						(message.get(KEY_ROOM_NAME) instanceof String &&
-						Message.stringFromJson(message, KEY_ROOM_NAME).length() > 0)) &&
-
-				message.get(KEY_CHANGE) instanceof Boolean &&
-
-				message.get(KEY_NAMES) instanceof List &&
-				validListOfNames(Message.listFromJson(message, KEY_NAMES));
-	}
-
 }

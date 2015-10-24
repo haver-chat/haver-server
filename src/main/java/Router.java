@@ -3,7 +3,6 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
 import java.lang.Override;
 import java.net.InetSocketAddress;
@@ -69,12 +68,12 @@ public class Router extends WebSocketServer {
 
 		JSONObject jsonObject = Message.jsonFromString(message);
 		if (jsonObject == null) return; // invalid JSON
-		int type = Message.getType(jsonObject);
-		if (type == -1) return; // invalid type
+		Message.Type type = Message.getType(jsonObject);
+		if (type == null) return; // invalid type
 
 		if (room != null) {
 			switch (type) {
-				case Message.TYPE_LOCATION:
+				case LOCATION:
 					if (room.inRange(client.getLocation())) {
                         Location location = Location.fromJSON(jsonObject);
                         if (location == null) return;
@@ -88,7 +87,7 @@ public class Router extends WebSocketServer {
 					}
 					break;
 
-				case Message.TYPE_POST:
+				case POST:
 					room.send(Post.fromJSON(client, jsonObject));
 					break;
 
@@ -99,7 +98,7 @@ public class Router extends WebSocketServer {
 			}
 		} else {
 			switch (type) {
-				case Message.TYPE_LOCATION:
+				case LOCATION:
                     Location location = Location.fromJSON(jsonObject);
                     if (location == null) return;
 					client.setLocation(location);
@@ -112,7 +111,7 @@ public class Router extends WebSocketServer {
 					}
 					break;
 
-				case Message.TYPE_ROOM_INFO:
+				case ROOM_INFO:
 					if (client.getLocation() != null) {
 						RoomInfo roomInfo = RoomInfo.fromJSON(jsonObject);
                         if (roomInfo == null) return;

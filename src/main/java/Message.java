@@ -1,7 +1,6 @@
 import org.json.simple.JSONObject;
 import org.json.simple.parser.ParseException;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,28 +9,50 @@ import java.util.List;
  * Fields must be primitives ONLY if they are to be stringifiable and override toString.
  */
 public abstract class Message {
-	public final static int TYPE_LOCATION = 0;
-	public final static int TYPE_POST = 1;
-    public final static int TYPE_ROOM_INFO = 2;
-	public final static int TYPE_CLIENT_INFO = 3;
-    public final static int[] TYPES = {TYPE_LOCATION, TYPE_POST, TYPE_ROOM_INFO, TYPE_CLIENT_INFO};
-	public final static String KEY_TYPE = "type";
-	public final static String ROOM_INFO_REQUEST = "{\"" + KEY_TYPE + "\": " + TYPE_ROOM_INFO + '}';
-	public final static String LOCATION_REQUEST = "{\"" + KEY_TYPE + "\": " + TYPE_LOCATION + '}';
-	public final static String POST_REQUEST = "{\"" + KEY_TYPE + "\": " + TYPE_POST + '}';
 
-	/**
-	 * @param message
-	 * @return True if the message is valid.
-	 */
-	public static int getType(JSONObject message) {
-        if (message.containsKey(KEY_TYPE) && message.get(KEY_TYPE) instanceof Number) {
-            int type = intFromJson(message, KEY_TYPE);
-            for (int i : TYPES) {
-                if (type == i) return type;
+	public interface JSONKey {}
+
+	public enum Key implements JSONKey {
+		TYPE("type");
+
+		public final String key;
+
+		Key(String key) {
+			this.key = key;
+		}
+
+		@Override
+		public String toString() {return key;}
+	}
+
+	public enum Type {
+		LOCATION(0),
+		POST(1),
+		ROOM_INFO(2),
+		CLIENT_INFO(3);
+
+		public final int type;
+
+		Type(int type) {
+			this.type = type;
+		}
+
+		@Override
+		public String toString() {return Integer.toString(type);}
+	}
+
+	public final static String ROOM_INFO_REQUEST = "{\"" + Key.TYPE + "\": " + Type.ROOM_INFO + '}';
+	public final static String LOCATION_REQUEST = "{\"" + Key.TYPE + "\": " + Type.LOCATION + '}';
+	public final static String POST_REQUEST = "{\"" + Key.TYPE + "\": " + Type.POST + '}';
+
+	public static Type getType(JSONObject message) {
+        if (message.containsKey(Key.TYPE) && message.get(Key.TYPE) instanceof Number) {
+            int typeNumber = intFromJson(message, Key.TYPE);
+            for (Type type : Type.values()) {
+                if (typeNumber == type.type) return type;
             }
         }
-        return -1;
+        return null;
 	}
 
 
@@ -73,7 +94,7 @@ public abstract class Message {
 	 * @param key The key that maps to a Number in the jsonObject.
 	 * @return The specified value as a double.
 	 */
-    protected static double doubleFromJson(JSONObject jsonObject, String key) {
+    protected static double doubleFromJson(JSONObject jsonObject, JSONKey key) {
 		return ((Number) jsonObject.get(key)).doubleValue();
     }
 
@@ -85,7 +106,7 @@ public abstract class Message {
      * @param key The key that maps to a Number in the jsonObject.
      * @return The specified value as a int.
      */
-    protected static int intFromJson(JSONObject jsonObject, String key) {
+    protected static int intFromJson(JSONObject jsonObject, JSONKey key) {
         return ((Number) jsonObject.get(key)).intValue();
     }
 
@@ -97,7 +118,7 @@ public abstract class Message {
 	 * @param key The key that maps to a String in the jsonObject.
 	 * @return The specified value as a String.
 	 */
-    protected static String stringFromJson(JSONObject jsonObject, String key) {
+    protected static String stringFromJson(JSONObject jsonObject, JSONKey key) {
 		return (String) jsonObject.get(key);
     }
 
@@ -109,7 +130,7 @@ public abstract class Message {
 	 * @param key The key that maps to a List in the jsonObject.
 	 * @return The specified value as a List.
 	 */
-    protected static List listFromJson(JSONObject jsonObject, String key) {
+    protected static List listFromJson(JSONObject jsonObject, JSONKey key) {
         return (List) jsonObject.get(key);
     }
 }

@@ -1,5 +1,4 @@
 import org.json.simple.JSONObject;
-import org.json.simple.parser.ParseException;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -7,9 +6,20 @@ import java.util.stream.Collectors;
 
 public class Post extends Message {
 
-	public final static String KEY_FROM = "from";
-	public final static String KEY_CONTENT = "content";
-	public final static String KEY_TO = "to";
+	public enum Key implements JSONKey {
+		FROM("from"),
+		CONTENT("content"),
+		TO("to");
+
+		public final String key;
+
+		Key(String key) {
+			this.key = key;
+		}
+
+		@Override
+		public String toString() {return key;}
+	}
 
     private String from;
     private String content;
@@ -23,14 +33,14 @@ public class Post extends Message {
 
 	public static Post fromJSON(Client client, JSONObject jsonObject) {
         try {
-            if (jsonObject.size() != 3) throw new Exception("Wrong number of keys");
-            if (!(jsonObject.containsKey(KEY_CONTENT) && jsonObject.containsKey(KEY_TO))) throw new Exception("Wrong keys");
-            if (!(jsonObject.get(KEY_CONTENT) instanceof String && jsonObject.get(KEY_TO) instanceof List))
+            if (jsonObject.size() != Key.values().length + 1 - 1) throw new Exception("Wrong number of keys");
+            if (!(jsonObject.containsKey(Key.CONTENT) && jsonObject.containsKey(Key.TO))) throw new Exception("Wrong keys");
+            if (!(jsonObject.get(Key.CONTENT) instanceof String && jsonObject.get(Key.TO) instanceof List))
                 throw new Exception("Values are wrong type");
-            String content = Message.stringFromJson(jsonObject, KEY_CONTENT);
-            List<String> to = Message.listFromJson(jsonObject, KEY_TO);
+            String content = Message.stringFromJson(jsonObject, Key.CONTENT);
+            List to = Message.listFromJson(jsonObject, Key.TO);
             if (!(content.length() > 0 && validListOfNames(to))) throw new Exception("Values' content is invalid");
-            return new Post(client.getName(), content, to);
+            return new Post(client.getName(), content, to); // This is a checked cast because validListOfNames(List) returned true.
         } catch(Exception e) {
             System.err.println("Post:fromJSON : " + e.getMessage());
             return null;
@@ -43,10 +53,10 @@ public class Post extends Message {
 	@Override
     public String toString() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put(Message.KEY_TYPE, Message.TYPE_POST);
-        jsonObject.put(KEY_FROM, from);
-        jsonObject.put(KEY_CONTENT, content);
-        jsonObject.put(KEY_TO, to); // NB: All recipients know all other recipients.
+        jsonObject.put(Message.Key.TYPE, Message.Type.POST);
+        jsonObject.put(Key.FROM, from);
+        jsonObject.put(Key.CONTENT, content);
+        jsonObject.put(Key.TO, to); // NB: All recipients know all other recipients.
         return jsonObject.toJSONString();
     }
 

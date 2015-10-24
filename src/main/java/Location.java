@@ -4,14 +4,37 @@ import java.util.Calendar;
 
 public class Location extends Message {
 
-	public final static String KEY_LATITUDE = "latitude";
-	public final static double LATITUDE_MAX = 90d;
-	public final static double LATITUDE_MIN = -90d;
-	public final static String KEY_LONGITUDE = "longitude";
-	public final static double LONGITUDE_MAX = 180d;
-	public final static double LONGITUDE_MIN = -180d;
-	public final static String KEY_ACCURACY = "accuracy";
-	public final static int ACCURACY_MIN = 0;
+	public enum Key implements JSONKey {
+		LATITUDE("latitude"),
+		LONGITUDE("longitude"),
+		ACCURACY("accuracy");
+
+		public final String key;
+
+		Key(String key) {
+			this.key = key;
+		}
+
+		@Override
+		public String toString() {return key;}
+	}
+
+	public enum Constraint {
+		LATITUDE_MIN(-90),
+		LATITUDE_MAX(90),
+		LONGITUDE_MIN(-180),
+		LONGITUDE_MAX(180),
+		ACCURACY_MIN(0);
+
+		public final int constraint;
+
+		Constraint(int constraint) {
+			this.constraint = constraint;
+		}
+
+		@Override
+		public String toString() {return Integer.toString(constraint);}
+	}
 
 	public final double latitude;
 	public final double longitude;
@@ -31,24 +54,26 @@ public class Location extends Message {
 
     public static Location fromJSON(JSONObject jsonObject) {
         try {
-            if (jsonObject.size() != 4) throw new Exception("Wrong number of keys");
+            if (jsonObject.size() != Key.values().length + 1) throw new Exception("Wrong number of keys");
             if (!(
-                    jsonObject.containsKey(KEY_LATITUDE) &&
-                    jsonObject.containsKey(KEY_LONGITUDE) &&
-                    jsonObject.containsKey(KEY_ACCURACY)
+                    jsonObject.containsKey(Key.LATITUDE) &&
+                    jsonObject.containsKey(Key.LONGITUDE) &&
+                    jsonObject.containsKey(Key.ACCURACY)
             )) throw new Exception("Wrong keys");
             if (!(
-                    jsonObject.get(KEY_LATITUDE) instanceof Number &&
-                    jsonObject.get(KEY_LONGITUDE) instanceof Number &&
-                    jsonObject.get(KEY_ACCURACY) instanceof Number
+                    jsonObject.get(Key.LATITUDE) instanceof Number &&
+                    jsonObject.get(Key.LONGITUDE) instanceof Number &&
+                    jsonObject.get(Key.ACCURACY) instanceof Number
             )) throw new Exception("Values are wrong type");
-            double latitude = Message.doubleFromJson(jsonObject, KEY_LATITUDE);
-            double longitude = Message.doubleFromJson(jsonObject, KEY_LONGITUDE);
-            int accuracy = Message.intFromJson(jsonObject, KEY_ACCURACY);
+            double latitude = Message.doubleFromJson(jsonObject, Key.LATITUDE);
+            double longitude = Message.doubleFromJson(jsonObject, Key.LONGITUDE);
+            int accuracy = Message.intFromJson(jsonObject, Key.ACCURACY);
             if (!(
-                    latitude >= LATITUDE_MIN && latitude <= LATITUDE_MAX &&
-                    longitude >= LONGITUDE_MIN && longitude <= LONGITUDE_MAX &&
-                    accuracy >= ACCURACY_MIN
+                    latitude >= Constraint.LATITUDE_MIN.constraint &&
+							latitude <= Constraint.LATITUDE_MAX.constraint &&
+                    longitude >= Constraint.LONGITUDE_MIN.constraint &&
+							longitude <= Constraint.LONGITUDE_MAX.constraint &&
+                    accuracy >= Constraint.ACCURACY_MIN.constraint
             )) throw new Exception("Values' content is invalid");
 
             return new Location(latitude, longitude, accuracy);

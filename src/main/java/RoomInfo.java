@@ -2,10 +2,33 @@ import org.json.simple.JSONObject;
 
 public class RoomInfo extends Message {
 
-	public final static String KEY_NAME = "name";
-	public final static String KEY_RADIUS = "radius";
-	public final static double RADIUS_MAX = 1000d; // TODO Decide on value
-	public final static double RADIUS_MIN = 100d; // TODO Decide on value
+	public enum Key implements JSONKey {
+		NAME("name"),
+		RADIUS("radius");
+
+		public final String key;
+
+		Key(String key) {
+			this.key = key;
+		}
+
+		@Override
+		public String toString() {return key;}
+	}
+
+	public enum Constraint {
+		RADIUS_MIN(100), // TODO Decide on value.
+		RADIUS_MAX(1000); // TODO Decide on value.
+
+		public final int constraint;
+
+		Constraint(int constraint) {
+			this.constraint = constraint;
+		}
+
+		@Override
+		public String toString() {return Integer.toString(constraint);}
+	}
 
 	public final String name;
 	public final double radius;
@@ -17,13 +40,13 @@ public class RoomInfo extends Message {
 
 	public static RoomInfo fromJSON(JSONObject jsonObject) {
         try {
-            if (jsonObject.size() != 3) throw new Exception("Wrong number of keys");
-            if (!(jsonObject.containsKey(KEY_NAME) && jsonObject.containsKey(KEY_RADIUS)))
+            if (jsonObject.size() != Key.values().length + 1) throw new Exception("Wrong number of keys");
+            if (!(jsonObject.containsKey(Key.NAME) && jsonObject.containsKey(Key.RADIUS)))
                 throw new Exception("Wrong keys");
-            if (!(jsonObject.get(KEY_NAME) instanceof String && jsonObject.get(KEY_RADIUS) instanceof Number))
+            if (!(jsonObject.get(Key.NAME) instanceof String && jsonObject.get(Key.RADIUS) instanceof Number))
                 throw new Exception("Values are wrong type");
-            String name = Message.stringFromJson(jsonObject, KEY_NAME);
-            double radius = Message.doubleFromJson(jsonObject, KEY_RADIUS);
+            String name = Message.stringFromJson(jsonObject, Key.NAME);
+            double radius = Message.doubleFromJson(jsonObject, Key.RADIUS);
             if (!(name.length() > 0 && validRadius(radius))) throw new Exception("Values' content is invalid");
 
             return new RoomInfo(name, radius);
@@ -48,6 +71,7 @@ public class RoomInfo extends Message {
 	 * @return True if the radius is within the defined bounds.
 	 */
 	public static boolean validRadius(double radius) {
-		return radius >= RADIUS_MIN && radius <= RADIUS_MAX;
+		return radius >= Constraint.RADIUS_MIN.constraint &&
+				radius <= Constraint.RADIUS_MAX.constraint;
 	}
 }
