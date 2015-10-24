@@ -74,14 +74,12 @@ public class Router extends WebSocketServer {
 		if (room != null) {
 			switch (type) {
 				case LOCATION:
+					Location location = Location.fromJSON(jsonObject);
+					if (location == null) return;
 					if (room.inRange(client.getLocation())) {
-                        Location location = Location.fromJSON(jsonObject);
-                        if (location == null) return;
 						room.updateLocation(client, location);
 					} else {
 						room.close(conn);
-                        Location location = Location.fromJSON(jsonObject);
-                        if (location == null) return;
 						client.setLocation(location);
 						rooms.replace(client, getRoom(location));
 					}
@@ -92,7 +90,7 @@ public class Router extends WebSocketServer {
 					break;
 
 				default:
-					System.out.println("Invalid message from ["+conn+"]: <location request>");
+					System.out.println("Message from ["+conn+"] was invalid");
 					// Client dun goof'd
 					break;
 			}
@@ -106,7 +104,7 @@ public class Router extends WebSocketServer {
 					if (room != null) {
 						setRoom(conn, client, room);
 					} else {
-						conn.send(Message.ROOM_INFO_REQUEST);
+						conn.send(Message.Request.ROOM_INFO.request);
 						System.out.println("Message to ["+conn+"]: <room info request>");
 					}
 					break;
@@ -119,14 +117,14 @@ public class Router extends WebSocketServer {
 						setRoom(conn, client, room);
 					} else {
 						// Client dun goof'd
-						conn.send(Message.LOCATION_REQUEST);
+						conn.send(Message.Request.LOCATION.request);
 						System.out.println("Invalid room info from ["+conn+"]: <location request>");
 					}
 					break;
 
 				default:
 					// Client dun goof'd
-					conn.send(Message.LOCATION_REQUEST);
+					conn.send(Message.Request.LOCATION.request);
 					System.out.println("Invalid message from ["+conn+"]: <location request>");
 					break;
 			}
@@ -147,7 +145,7 @@ public class Router extends WebSocketServer {
             rooms.put(client, room);
         }
 		room.addClient(conn, client);
-		conn.send(Message.POST_REQUEST); // Receipt of a Post request tells the Client it has been allocated to a valid room
+		conn.send(Message.Request.POST.request); // Receipt of a Post request tells the Client it has been allocated to a valid room
         System.out.println("Added conn to room ["+conn+"]: <post request>");
 	}
 

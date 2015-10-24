@@ -41,9 +41,9 @@ public class RoomInfo extends Message {
 	public static RoomInfo fromJSON(JSONObject jsonObject) {
         try {
             if (jsonObject.size() != Key.values().length + 1) throw new Exception("Wrong number of keys");
-            if (!(jsonObject.containsKey(Key.NAME) && jsonObject.containsKey(Key.RADIUS)))
+            if (!(jsonObject.containsKey(Key.NAME.key) && jsonObject.containsKey(Key.RADIUS.key)))
                 throw new Exception("Wrong keys");
-            if (!(jsonObject.get(Key.NAME) instanceof String && jsonObject.get(Key.RADIUS) instanceof Number))
+            if (!(jsonObject.get(Key.NAME.key) instanceof String && jsonObject.get(Key.RADIUS.key) instanceof Number))
                 throw new Exception("Values are wrong type");
             String name = Message.stringFromJson(jsonObject, Key.NAME);
             double radius = Message.doubleFromJson(jsonObject, Key.RADIUS);

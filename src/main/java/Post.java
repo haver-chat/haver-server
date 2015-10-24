@@ -34,8 +34,8 @@ public class Post extends Message {
 	public static Post fromJSON(Client client, JSONObject jsonObject) {
         try {
             if (jsonObject.size() != Key.values().length + 1 - 1) throw new Exception("Wrong number of keys");
-            if (!(jsonObject.containsKey(Key.CONTENT) && jsonObject.containsKey(Key.TO))) throw new Exception("Wrong keys");
-            if (!(jsonObject.get(Key.CONTENT) instanceof String && jsonObject.get(Key.TO) instanceof List))
+            if (!(jsonObject.containsKey(Key.CONTENT.key) && jsonObject.containsKey(Key.TO.key))) throw new Exception("Wrong keys");
+            if (!(jsonObject.get(Key.CONTENT.key) instanceof String && jsonObject.get(Key.TO.key) instanceof List))
                 throw new Exception("Values are wrong type");
             String content = Message.stringFromJson(jsonObject, Key.CONTENT);
             List to = Message.listFromJson(jsonObject, Key.TO);
@@ -53,10 +53,10 @@ public class Post extends Message {
 	@Override
     public String toString() {
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put(Message.Key.TYPE, Message.Type.POST);
-        jsonObject.put(Key.FROM, from);
-        jsonObject.put(Key.CONTENT, content);
-        jsonObject.put(Key.TO, to); // NB: All recipients know all other recipients.
+        jsonObject.put(Message.Key.TYPE.key, Type.POST.type);
+        jsonObject.put(Key.FROM.key, from);
+        jsonObject.put(Key.CONTENT.key, content);
+        jsonObject.put(Key.TO.key, to); // NB: All recipients know all other recipients.
         return jsonObject.toJSONString();
     }
 

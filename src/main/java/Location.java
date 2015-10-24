@@ -56,14 +56,14 @@ public class Location extends Message {
         try {
             if (jsonObject.size() != Key.values().length + 1) throw new Exception("Wrong number of keys");
             if (!(
-                    jsonObject.containsKey(Key.LATITUDE) &&
-                    jsonObject.containsKey(Key.LONGITUDE) &&
-                    jsonObject.containsKey(Key.ACCURACY)
+                    jsonObject.containsKey(Key.LATITUDE.key) &&
+                    jsonObject.containsKey(Key.LONGITUDE.key) &&
+                    jsonObject.containsKey(Key.ACCURACY.key)
             )) throw new Exception("Wrong keys");
             if (!(
-                    jsonObject.get(Key.LATITUDE) instanceof Number &&
-                    jsonObject.get(Key.LONGITUDE) instanceof Number &&
-                    jsonObject.get(Key.ACCURACY) instanceof Number
+                    jsonObject.get(Key.LATITUDE.key) instanceof Number &&
+                    jsonObject.get(Key.LONGITUDE.key) instanceof Number &&
+                    jsonObject.get(Key.ACCURACY.key) instanceof Number
             )) throw new Exception("Values are wrong type");
             double latitude = Message.doubleFromJson(jsonObject, Key.LATITUDE);
             double longitude = Message.doubleFromJson(jsonObject, Key.LONGITUDE);

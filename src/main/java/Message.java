@@ -41,9 +41,20 @@ public abstract class Message {
 		public String toString() {return Integer.toString(type);}
 	}
 
-	public final static String ROOM_INFO_REQUEST = "{\"" + Key.TYPE + "\": " + Type.ROOM_INFO + '}';
-	public final static String LOCATION_REQUEST = "{\"" + Key.TYPE + "\": " + Type.LOCATION + '}';
-	public final static String POST_REQUEST = "{\"" + Key.TYPE + "\": " + Type.POST + '}';
+	public enum Request {
+		LOCATION("{\"" + Key.TYPE + "\": " + Type.ROOM_INFO + '}'),
+		POST("{\"" + Key.TYPE + "\": " + Type.POST + '}'),
+		ROOM_INFO("{\"" + Key.TYPE + "\": " + Type.ROOM_INFO + '}');
+
+		public final String request;
+
+		Request(String request) {
+			this.request = request;
+		}
+
+		@Override
+		public String toString() {return request;}
+	}
 
 	public static Type typeFromJson(JSONObject message) {
         if (message.containsKey(Key.TYPE.key) && message.get(Key.TYPE.key) instanceof Number) {
