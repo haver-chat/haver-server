@@ -126,12 +126,13 @@ var Socket = function() {
     }
     
     var addMessage = function(message) {
-      var bottom = document.body.scrollTop + window.innerHeight == document.body.scrollHeight;
+      var div = document.querySelector('#chat-list');
+      var bottom = div.scrollTop + div.offsetHeight === div.scrollHeight;
       console.log("Adding messsage to UL");
       var li = document.createElement('li');
       li.innerHTML += "<span class=\"username\">" + escapeHtml(message.from) + "</span>: " + escapeHtml(message.content);
       document.querySelector('#chat ul').appendChild(li);
-      if (bottom) document.body.scrollTop = document.body.scrollHeight - window.innerHeight;
+      if (bottom) div.scrollTop = div.scrollHeight - div.offsetHeight;
     } 
     
   }

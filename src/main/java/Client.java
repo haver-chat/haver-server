@@ -64,7 +64,7 @@ public class Client {
 	 */
 	public static boolean validNames(List<String> names) {
 		for(String name : names) {
-			if(!(Arrays.binarySearch(NAMES, name) >= 0)) {return false;}
+			if (!validName(name)) return false;
 		}
 		return true;
 	}

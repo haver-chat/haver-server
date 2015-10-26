@@ -1,0 +1,61 @@
+/* Fonts */
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Lato Regular'),
+       local('Lato-Regular'),
+       url(/res/fonts/Lato-Regular.woff2) format('woff2'),
+       url(/res/fonts/Lato-Regular.ttf) format('truetype');
+}
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Lato Semibold'),
+       local('Lato-Semibold'),
+       url(/res/fonts/Lato-Semibold.woff2) format('woff2'),
+       url(/res/fonts/Lato-Semibold.ttf) format('truetype');
+}
+
+body {
+  margin: 0;
+  font-size: 19px;
+  font-family: -apple-system, 'Lato', sans-serif;
+  background-color: #AED4DA;
+  color: #313F41;
+}
+
+#chat {
+  width: 100%;
+}
+
+#chat-list {
+  overflow-y: scroll;
+  height: calc(100vh - 46px);
+}
+#chat-list ul {
+  list-style-type: none;
+  margin: 10px;
+  padding: 0;
+}
+#chat-list li {
+  padding: 5px;
+}
+#chat-list span.username {
+  font-weight: bold;
+  color: #41838D;
+}
+
+#chat-form input[type=text] {
+  font-family: 'Lato', sans-serif;
+  width: 100%;
+  border: none;
+  margin: 0;
+  padding: 15px;
+  position: fixed;
+  bottom: 0;
+  font-size: 19px;
+  background-color: #58B2C0;
+  color: #313F41;
+}

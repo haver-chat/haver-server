@@ -77,7 +77,6 @@ public class Room {
         Client client = clients.get(conn);
 		freeNames.add(client.getName()); // Before .remove to keep thread safe
 		clients.remove(conn);
-		conn.send(ClientInfo.toString(false, client.getName()));
         String removeClientString = ClientInfo.toString(false, client.getName());
         clients.forEach((k, v) -> k.send(removeClientString));
 	}
