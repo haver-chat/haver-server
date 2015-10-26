@@ -129,7 +129,7 @@ var Socket = function() {
       var bottom = document.body.scrollTop + window.innerHeight == document.body.scrollHeight;
       console.log("Adding messsage to UL");
       var li = document.createElement('li');
-      li.innerHTML += "<b>" + escapeHtml(message.from) + "</b>: " + escapeHtml(message.content);
+      li.innerHTML += "<span class=\"username\">" + escapeHtml(message.from) + "</span>: " + escapeHtml(message.content);
       document.querySelector('#chat ul').appendChild(li);
       if (bottom) document.body.scrollTop = document.body.scrollHeight - window.innerHeight;
     } 

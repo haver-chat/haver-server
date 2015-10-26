@@ -32,7 +32,7 @@ public class Router extends WebSocketServer {
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
 		Client client = new Client();
 		clients.put(conn, client);
-        System.out.println("New connection: " + handshake.getContent());
+        System.out.println("New connection (" + clients.size() + "): " + conn);
 	}
 
 	@Override
@@ -43,7 +43,7 @@ public class Router extends WebSocketServer {
             rooms.get(client).close(conn);
             rooms.remove(client);
         }
-        System.out.println("Connection closed: " + conn);
+        System.out.println("Connection closed(" + clients.size() + "): " + conn);
 	}
 
 	@Override
@@ -51,6 +51,7 @@ public class Router extends WebSocketServer {
 		ex.printStackTrace();
 		if (conn != null) {
 			// some errors like port binding failed may not be assignable to a specific websocket
+			conn.close();
 		}
 	}
 
