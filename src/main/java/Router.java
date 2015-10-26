@@ -145,7 +145,6 @@ public class Router extends WebSocketServer {
             rooms.put(client, room);
         }
 		room.addClient(conn, client);
-        System.out.println("Added conn to room ["+conn+"]: <post request>");
 	}
 
 	public Room getRoom(Location location) {

@@ -46,6 +46,11 @@ public class Room {
 		client.setName(generateName()); // After .put to keep thread safe
         centre = recalculateCentre(client.getLocation());
 		conn.send(ClientInfo.toString(name, client.getName(), true, clients.values()));
+		String newClientString = ClientInfo.toString(true, client.getName());
+		clients.forEach((k, v) -> {
+			if (k != conn) k.send(newClientString);
+		});
+		System.out.println("Added conn to room ["+conn+"]: <client info request>");
 	}
 
 	/**
@@ -73,6 +78,8 @@ public class Room {
 		freeNames.add(client.getName()); // Before .remove to keep thread safe
 		clients.remove(conn);
 		conn.send(ClientInfo.toString(false, client.getName()));
+        String removeClientString = ClientInfo.toString(false, client.getName());
+        clients.forEach((k, v) -> k.send(removeClientString));
 	}
 
 	/**

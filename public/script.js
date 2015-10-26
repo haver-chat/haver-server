@@ -81,6 +81,30 @@ var Socket = function() {
           _this.send(_this.types.ROOM_INFO, room);
           break;
         case types.CLIENT_INFO:
+          if (typeof message.clientName != 'undefined') {
+            addMessage({
+              from: 'System',
+              content: 'Welcome to ' + message.roomName + ', you are the ' + message.clientName
+            });
+            message.names.splice(message.names.indexOf(message.clientName), 1);
+            if (message.names.length > 0) {
+              var names = 'Say hello to: ' + message.names[0];
+              for (var i = 1; i < message.names.length; i++) names += ', ' + message.names[i];
+              addMessage({
+                from: 'System',
+                content: names
+              });
+            }
+          } else {
+            console.log('Single user joined or left')
+            for (var i = 0; i < message.names.length; i++) {
+              var status = message.change ? 'joined' : 'left';
+              addMessage({
+                from: 'System',
+                content: message.names[i] + ' has ' + status + ' the room'
+              });
+            }
+          }
           break;
         default:
           break;

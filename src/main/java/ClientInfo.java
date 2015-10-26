@@ -74,7 +74,7 @@ public class ClientInfo extends Message {
 		for(Client client : clients) {
 			sb.append(client.getName()).append("\", \"");
 		}
-		sb.delete((sb.length() - 1 - 2), (sb.length() - 1));
+		sb.delete((sb.length() - 1 - 3), (sb.length() - 1));
 		sb.append("]}");
 		return sb.toString();
 	}
@@ -92,6 +92,6 @@ public class ClientInfo extends Message {
 		return "{\"" +
 				Message.Key.TYPE + "\": " + Type.CLIENT_INFO + ", \"" +
 				Key.CHANGE + "\": " + change + ", \"" +
-				Key.NAMES + "\": \"" + name  + "\"}";
+				Key.NAMES + "\": [\"" + name  + "\"]}";
 	}
 }
