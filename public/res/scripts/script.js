@@ -53,7 +53,7 @@ var Socket = function() {
   
   this.connect = function() {
     var protocol = location.protocol.split('http').join('ws') + '//';
-    var host = (protocol == "file://") ? 'ws://127.0.0.1:8080' : protocol + location.host;
+    var host = (protocol == "file://") ? 'ws://127.0.0.1:8080' : protocol + location.host + '/soc';
     _this.socket = new WebSocket(host);
     
     _this.socket.onopen = function() {
