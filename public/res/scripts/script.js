@@ -61,7 +61,10 @@ var Socket = function() {
     }
     
     _this.socket.onclose = function() {
-      console.log("Disconnected");
+      addMessage({
+        from: 'System',
+        content: 'You have disconnected'
+      })
       _this.reconnect();
     }
     
@@ -96,7 +99,6 @@ var Socket = function() {
               });
             }
           } else {
-            console.log('Single user joined or left')
             for (var i = 0; i < message.names.length; i++) {
               var status = message.change ? 'joined' : 'left';
               addMessage({
@@ -138,7 +140,9 @@ var Socket = function() {
   }
   
   this.reconnect = function() {
-    
+    setTimeout(function() {
+      _this.connect();
+    }, 3000);
   }
 }
 

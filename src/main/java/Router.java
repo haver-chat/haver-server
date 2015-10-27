@@ -8,6 +8,7 @@ import java.lang.Override;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.List;
 
 // TODO Get token lib
 
@@ -32,7 +33,7 @@ public class Router extends WebSocketServer {
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
 		Client client = new Client();
 		clients.put(conn, client);
-        System.out.println("New connection (" + clients.size() + "): " + conn);
+        System.out.println("New connection (" + clients.size() + " connections): " + conn);
 	}
 
 	@Override
@@ -43,7 +44,7 @@ public class Router extends WebSocketServer {
             rooms.get(client).close(conn);
             rooms.remove(client);
         }
-        System.out.println("Connection closed(" + clients.size() + "): " + conn);
+        System.out.println("Connection closed(" + clients.size() + " remaining): " + conn);
 	}
 
 	@Override
@@ -87,7 +88,8 @@ public class Router extends WebSocketServer {
 					break;
 
 				case POST:
-					room.send(Post.fromJSON(client, jsonObject));
+					if (client.addToQueue()) room.send(Post.fromJSON(client, jsonObject));
+					else System.out.println("Messages too frequent, rate limiting: " + client.getName());
 					break;
 
 				default:

@@ -14,9 +14,11 @@ public class Client {
 	private String name;
 	private Location location;
 	private final Object token;
+	private Queue queue;
 
 	public Client() {
 		this.token = generateToken();
+        this.queue = new Queue();
 	}
 
 	//TODO Generate tokens
@@ -28,6 +30,10 @@ public class Client {
 	public boolean isValid() {
 		return true;
 	}
+
+    public boolean addToQueue() {
+        return queue.add();
+    }
 
 	public Location getLocation() {
 		return location;
