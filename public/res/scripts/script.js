@@ -53,7 +53,7 @@ var Socket = function() {
   
   this.connect = function() {
     var protocol = location.protocol.split('http').join('ws') + '//';
-    var host = (protocol == "file://") ? 'ws://127.0.0.1:8080' : protocol + location.host + ':8080';
+    var host = (protocol == "file://") ? 'ws://127.0.0.1:8080' : protocol + location.host;
     _this.socket = new WebSocket(host);
     
     _this.socket.onopen = function() {
@@ -142,7 +142,7 @@ var Socket = function() {
   }
 }
 
-document.querySelector("form#chat-form").onsubmit = function(e) {
+document.querySelector("#chat-form").onsubmit = function(e) {
   e.preventDefault();
   try {
     var message = document.querySelector("input[name=msg-box]").value.trim();
@@ -154,6 +154,11 @@ document.querySelector("form#chat-form").onsubmit = function(e) {
     throw new Error(exception.message);
   }
   return false;
+}
+
+document.querySelector("#chat-form input").onfocus = function() {
+  var div = document.querySelector('#chat-list');
+  div.scrollTop = div.scrollHeight - div.offsetHeight; // scroll to bottom
 }
 
 var escapeHtml = function(unsafe) {
