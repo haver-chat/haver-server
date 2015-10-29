@@ -65,6 +65,11 @@ public class Router extends WebSocketServer {
 	@Override
 	public void onMessage(WebSocket conn, String message) {
 		Client client = clients.get(conn);
+		if (!client.addToQueue()) {
+			System.out.println("Messages too frequent, rate limiting: " + client.getName());
+			return;
+		}
+
 		Room room = rooms.get(client);
 		System.out.println("Message from [" + conn + "]: " + message);
 
@@ -88,8 +93,7 @@ public class Router extends WebSocketServer {
 					break;
 
 				case POST:
-					if (client.addToQueue()) room.send(Post.fromJSON(client, jsonObject));
-					else System.out.println("Messages too frequent, rate limiting: " + client.getName());
+					room.send(Post.fromJSON(client, jsonObject));
 					break;
 
 				default:

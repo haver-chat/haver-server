@@ -50,7 +50,7 @@ public class Room {
 		clients.forEach((k, v) -> {
 			if (k != conn) k.send(newClientString);
 		});
-		System.out.println("Added conn to room ["+conn+"]: <client info request>");
+		System.out.println("Added conn ["+conn+"] to room ["+this+"]: <client info request>");
 	}
 
 	/**
