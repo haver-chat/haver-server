@@ -14,11 +14,13 @@ public class Client {
 	private String name;
 	private Location location;
 	private final Object token;
-	private Queue queue;
+	private final CircularRateQueue queue;
+	private static final int MESSAGES = 10;
+	private static final int MILLISECONDS = 5000;
 
 	public Client() {
 		this.token = generateToken();
-        this.queue = new Queue();
+        this.queue = new CircularRateQueue(MESSAGES, MILLISECONDS);
 	}
 
 	//TODO Generate tokens

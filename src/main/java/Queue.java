@@ -3,6 +3,7 @@ import java.util.Date;
 /**
  * Created by azertify on 27/10/15.
  */
+@Deprecated
 public class Queue {
     private static final int MESSAGES = 10;
     private static final int SECONDS = 5;
