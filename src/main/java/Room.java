@@ -1,6 +1,7 @@
 import org.java_websocket.WebSocket;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A location-based chat room.
@@ -159,9 +160,12 @@ public class Room {
         if (centre == null) {
             return location;
         } else {
-            return new Location(
-                    ((centre.getLatitude() * (clients.size()-1)) + location.getLatitude()) / clients.size(),
-                    ((centre.getLongitude() * (clients.size()-1)) + location.getLongitude()) / clients.size()
+            return Location.getCentre(
+                    clients
+                            .values()
+                            .stream()
+                            .map(c -> c.getLocation())
+                            .collect(Collectors.toList())
             );
         }
 	}

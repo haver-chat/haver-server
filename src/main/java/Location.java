@@ -1,6 +1,7 @@
 import org.json.simple.JSONObject;
 
 import java.util.Calendar;
+import java.util.List;
 
 public class Location extends Message {
 
@@ -115,4 +116,27 @@ public class Location extends Message {
 	 * @return standard Java epoch time when the location data was received from the client
 	 */
 	public long getTime() {return time;}
+
+    public static Location getCentre(List<Location> locationList) {
+        double sumX = 0;
+        double sumY = 0;
+        double sumZ = 0;
+        for(Location loc : locationList) {
+            double lat = Math.toRadians(loc.latitude);
+            double lng = Math.toRadians(loc.longitude);
+            sumX += Math.cos(lat) * Math.cos(lng);
+            sumY += Math.cos(lat) * Math.sin(lng);
+            sumZ += Math.sin(lat);
+        }
+        int size = locationList.size();
+        double avgX = sumX / size;
+        double avgY = sumY / size;
+        double avgZ = sumZ / size;
+
+        double lng = Math.atan2(avgY, avgX);
+        double hyp = Math.sqrt(avgX * avgX + avgY * avgY);
+        double lat = Math.atan2(avgZ, hyp);
+
+        return new Location(lat, lng);
+    }
 }
