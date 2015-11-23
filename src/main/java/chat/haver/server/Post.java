@@ -1,3 +1,5 @@
+package chat.haver.server;
+
 import org.json.simple.JSONObject;
 
 import java.util.ArrayList;

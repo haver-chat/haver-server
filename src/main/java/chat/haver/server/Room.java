@@ -1,3 +1,5 @@
+package chat.haver.server;
+
 import org.java_websocket.WebSocket;
 
 import java.util.*;

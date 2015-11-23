@@ -1,3 +1,5 @@
+package chat.haver.server;
+
 import java.util.Arrays;
 import java.util.Date;
 
