@@ -2,7 +2,7 @@ language: java
 jdk:
   - oraclejdk8
 before_install:
-  - openssl aes-256-cbc -K $encrypted_dfdd3738d96b_key -iv $encrypted_dfdd3738d96b_iv -in deploy_key.enc -out deploy_key -d
+  - openssl aes-256-cbc -K $encrypted_dfdd3738d96b_key -iv $encrypted_dfdd3738d96b_iv -in .travis/deploy_key.enc -out .travis/deploy_key -d
 after_success:
   - eval "$(ssh-agent -s)" #start the ssh agent
   - chmod 600 .travis/deploy_key # this key should have push access
