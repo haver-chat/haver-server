@@ -9,5 +9,3 @@ after_success:
   - ssh-add .travis/deploy_key.pem
   - git remote add deploy git@haver.chat:haver-server
   - git push deploy
-addons:
-  ssh_known_hosts: haver.chat
