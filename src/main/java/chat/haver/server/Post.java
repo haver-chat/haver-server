@@ -33,6 +33,7 @@ public class Post extends Message {
 		setTo(to);
 	}
 
+	@SuppressWarnings("unchecked")
 	public static Post fromJSON(Client client, JSONObject jsonObject) {
         try {
             if (jsonObject.size() != Key.values().length + 1 - 1) throw new Exception("Wrong number of keys");
