@@ -138,6 +138,6 @@ public class Location extends Message {
         double hyp = Math.sqrt(avgX * avgX + avgY * avgY);
         double lat = Math.atan2(avgZ, hyp);
 
-        return new Location(lat, lng);
+        return new Location(Math.toDegrees(lat), Math.toDegrees(lng));
     }
 }
