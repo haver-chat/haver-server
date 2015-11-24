@@ -11,7 +11,7 @@ public class Client {
 			"Orange Battleship", "Orange Boot", "Orange Dog", "Orange Iron", "Orange Racecar", "Orange Thimble", "Orange Tophat", "Orange Wheelbarrow",
 			"Purple Battleship", "Purple Boot", "Purple Dog", "Purple Iron", "Purple Racecar", "Purple Thimble", "Purple Tophat", "Purple Wheelbarrow",
 			"Red Battleship", "Red Boot", "Red Dog", "Red Iron", "Red Racecar", "Red Thimble", "Red Tophat", "Red Wheelbarrow",
-			"Yellow Battleship", "Yellow Boot", "Yellow Dog", "Yellow Iron", "Yellow Racecar", "YellowT himble", "Yellow Tophat", "Yellow Wheelbarrow"};
+			"Yellow Battleship", "Yellow Boot", "Yellow Dog", "Yellow Iron", "Yellow Racecar", "Yellow Thimble", "Yellow Tophat", "Yellow Wheelbarrow"};
 
 	private String name;
 	private Location location;
