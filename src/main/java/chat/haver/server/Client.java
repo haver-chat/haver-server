@@ -6,12 +6,12 @@ import java.util.List;
 public class Client {
 	// Change to read in from file instead of set in code later.
 	public static final String[] NAMES = {
-			"BlueBattleship", "BlueBoot", "BlueDog", "BlueIron", "BlueRacecar", "BlueThimble", "BlueTophat", "BlueWheelbarrow",
-			"GreenBattleship", "GreenBoot", "GreenDog", "GreenIron", "GreenRacecar", "GreenThimble", "GreenTophat", "GreenWheelbarrow",
-			"OrangeBattleship", "OrangeBoot", "OrangeDog", "OrangeIron", "OrangeRacecar", "OrangeThimble", "OrangeTophat", "OrangeWheelbarrow",
-			"PurpleBattleship", "PurpleBoot", "PurpleDog", "PurpleIron", "PurpleRacecar", "PurpleThimble", "PurpleTophat", "PurpleWheelbarrow",
-			"RedBattleship", "RedBoot", "RedDog", "RedIron", "RedRacecar", "RedThimble", "RedTophat", "RedWheelbarrow",
-			"YellowBattleship", "YellowBoot", "YellowDog", "YellowIron", "YellowRacecar", "YellowThimble", "YellowTophat", "YellowWheelbarrow"};
+			"Blue Battleship", "Blue Boot", "Blue Dog", "Blue Iron", "Blue Racecar", "Blue Thimble", "Blue Tophat", "Blue Wheelbarrow",
+			"Green Battleship", "Green Boot", "Green Dog", "Green Iron", "Green Racecar", "Green Thimble", "Green Tophat", "Green Wheelbarrow",
+			"Orange Battleship", "Orange Boot", "Orange Dog", "Orange Iron", "Orange Racecar", "Orange Thimble", "Orange Tophat", "Orange Wheelbarrow",
+			"Purple Battleship", "Purple Boot", "Purple Dog", "Purple Iron", "Purple Racecar", "Purple Thimble", "Purple Tophat", "Purple Wheelbarrow",
+			"Red Battleship", "Red Boot", "Red Dog", "Red Iron", "Red Racecar", "Red Thimble", "Red Tophat", "Red Wheelbarrow",
+			"Yellow Battleship", "Yellow Boot", "Yellow Dog", "Yellow Iron", "Yellow Racecar", "YellowT himble", "Yellow Tophat", "Yellow Wheelbarrow"};
 
 	private String name;
 	private Location location;

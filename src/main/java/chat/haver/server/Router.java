@@ -9,6 +9,7 @@ import org.json.simple.parser.JSONParser;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
+import java.util.HashSet;
 
 // TODO Get token lib
 
@@ -157,9 +158,9 @@ public class Router extends WebSocketServer {
 	public Room getRoom(final Location location) {
 		double closest = Double.MAX_VALUE;
 		Room result = null;
-		for(Room room : rooms.values()) {
-			if(room.inRange(location)) {
-				double distance = room.getCentre().distanceBetween(location); // TODO Get this value passed back from the previous method chain
+		for(Room room : new HashSet<Room>(rooms.values())) {
+			double distance = room.getCentre().distanceBetween(location);
+			if(distance < room.getRadius()) {
 				if(distance < closest) {
 					closest = distance;
 					result = room;

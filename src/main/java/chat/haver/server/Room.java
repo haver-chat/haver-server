@@ -232,8 +232,8 @@ public class Room {
 		return false;
 
 		// Alternate implementation, which I believe will be slower:
-		//return Client.validName(name) &&
-		//	!freeNames.contains(name);
+		// return Client.validName(name) &&
+		// !freeNames.contains(name);
 	}
 
 	/**
@@ -247,5 +247,13 @@ public class Room {
 			if(!validName(name)) {return false;}
 		}
 		return true;
+	}
+
+	/**
+	 * Getter for radius
+	 * @return Radius
+	 */
+	public double getRadius() {
+		return radius;
 	}
 }
