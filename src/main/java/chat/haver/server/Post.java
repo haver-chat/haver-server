@@ -8,33 +8,33 @@ import java.util.stream.Collectors;
 
 public class Post extends Message {
 
-	public enum Key implements JSONKey {
-		FROM("from"),
-		CONTENT("content"),
-		TO("to");
+    public enum Key implements JSONKey {
+        FROM("from"),
+        CONTENT("content"),
+        TO("to");
 
-		public final String key;
+        public final String key;
 
-		Key(String key) {
-			this.key = key;
-		}
+        Key(final String key) {
+            this.key = key;
+        }
 
-		@Override
-		public String toString() {return key;}
-	}
+        @Override
+        public String toString() {return key;}
+    }
 
     private String from;
     private String content;
-	private List<String> to; // If not specified (empty), broadcast.
+    private List<String> to; // If not specified (empty), broadcast.
 
-	public Post(String from, String content, List<String> to) {
-		setFrom(from);
-		this.content = content;
-		setTo(to);
-	}
+    public Post(final String from, final String content, final List<String> to) {
+        setFrom(from);
+        this.content = content;
+        setTo(to);
+    }
 
-	@SuppressWarnings("unchecked")
-	public static Post fromJSON(Client client, JSONObject jsonObject) {
+    @SuppressWarnings("unchecked")
+    public static Post fromJSON(final Client client, final JSONObject jsonObject) {
         try {
             if (jsonObject.size() != Key.values().length + 1 - 1) throw new Exception("Wrong number of keys");
             if (!(jsonObject.containsKey(Key.CONTENT.key) && jsonObject.containsKey(Key.TO.key))) throw new Exception("Wrong keys");
@@ -50,10 +50,10 @@ public class Post extends Message {
         }
     }
 
-	/**
-	 * @return Stringified JSON.
-	 */
-	@Override
+    /**
+     * @return Stringified JSON.
+     */
+    @Override
     public String toString() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(Message.Key.TYPE.key, Type.POST.type);
@@ -63,43 +63,43 @@ public class Post extends Message {
         return jsonObject.toJSONString();
     }
 
-	public void setFrom(String from) {
-		// if (Main.DEBUG && !(Client.validName(from))) { System.err.println("Post:setFrom() : Name not valid"); } // Name should always be valid since set by server
-		this.from = from;
-	}
+    public void setFrom(final String from) {
+        // if (Main.DEBUG && !(Client.validName(from))) { System.err.println("Post:setFrom() : Name not valid"); } // Name should always be valid since set by server
+        this.from = from;
+    }
 
-	public String setContent(String content) {
-		this.content = content;
-		return this.content;
-	}
+    public String setContent(final String content) {
+        this.content = content;
+        return this.content;
+    }
 
-	/**
-	 * Enforces name uniqueness.
-	 * @param to
-	 */
-	public void setTo(List<String> to) {
-		if (Main.DEBUG && !(Client.validNames(to))) { System.err.println("Post:setTo() : Names not in list"); } // TODO: null check and fix error message
-		this.to = to.stream().distinct().collect(Collectors.toList());
-	}
+    /**
+     * Enforces name uniqueness.
+     * @param to
+     */
+    public void setTo(final List<String> to) {
+        if (Main.DEBUG && !(Client.validNames(to))) { System.err.println("Post:setTo() : Names not in list"); } // TODO: null check and fix error message
+        this.to = to.stream().distinct().collect(Collectors.toList());
+    }
 
-	public void setTo(String to) {
-		List<String> list = new ArrayList<>();
-		list.add(to);
-		setTo(list);
-	}
+    public void setTo(final String to) {
+        List<String> list = new ArrayList<>();
+        list.add(to);
+        setTo(list);
+    }
 
-	public String getFrom() {
-		return from;
-	}
+    public String getFrom() {
+        return from;
+    }
 
-	public String getContent() {
-		return content;
-	}
+    public String getContent() {
+        return content;
+    }
 
-	/**
-	 * @return
-	 */
-	public List<String> getTo() {
-		return to;
-	}
+    /**
+     * @return
+     */
+    public List<String> getTo() {
+        return to;
+    }
 }

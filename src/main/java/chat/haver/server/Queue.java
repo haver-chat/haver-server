@@ -16,9 +16,9 @@ public class Queue {
 	 * @param capacity The maximum amount of messages that can be processed
 	 * @param rate The time, in milliseconds, that the maximum amount of messages can be sent in
 	 */
-	public Queue(int capacity, int rate) {
+	public Queue(final int capacity, final int rate) {
 		array = new long[capacity];
-		Arrays.fill(array, -1l);
+		Arrays.fill(array, -1L);
 		this.rate = rate;
 	}
 
@@ -42,7 +42,7 @@ public class Queue {
 	 * @param now The epoch timestamp now
 	 * @return True if space was made, false otherwise
 	 */
-	public boolean clear(long now) {
+	public boolean clear(final long now) {
 		final long expireTime = now - rate;
 		final int startIndex = (head - 1 + array.length) % array.length;
 		int i = startIndex;
@@ -72,14 +72,14 @@ public class Queue {
 	 * @param fromIndex the first index to remove
 	 * @param toIndex the last index to remove
 	 */
-	private void remove(int fromIndex, int toIndex) {
-		for(int i = fromIndex; i > toIndex; i = (i + 1) % array.length) {array[i] = -1l;}
+	private void remove(final int fromIndex, final int toIndex) {
+		for(int i = fromIndex; i > toIndex; i = (i + 1) % array.length) {array[i] = -1L;}
 	}
 
 	/**
 	 * @return true if the array is empty, false otherwise
 	 */
-	public boolean isEmpty() {return (head == tail) && (array[tail] == -1l);}
+	public boolean isEmpty() {return (head == tail) && (array[tail] == -1L);}
 
 	/**
 	 * @return true if the array is full, false otherwise

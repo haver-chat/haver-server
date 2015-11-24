@@ -7,55 +7,56 @@ import java.util.List;
 
 public class Location extends Message {
 
-	public enum Key implements JSONKey {
-		LATITUDE("latitude"),
-		LONGITUDE("longitude"),
-		ACCURACY("accuracy");
+    public enum Key implements JSONKey {
+        LATITUDE("latitude"),
+        LONGITUDE("longitude"),
+        ACCURACY("accuracy");
 
-		public final String key;
+        public final String key;
 
-		Key(String key) {
-			this.key = key;
-		}
+        Key(final String key) {
+            this.key = key;
+        }
 
-		@Override
-		public String toString() {return key;}
-	}
+        @Override
+        public String toString() {return key;}
+    }
 
-	public enum Constraint {
-		LATITUDE_MIN(-90),
-		LATITUDE_MAX(90),
-		LONGITUDE_MIN(-180),
-		LONGITUDE_MAX(180),
-		ACCURACY_MIN(0);
+    public enum Constraint {
+        LATITUDE_MIN(-90),
+        LATITUDE_MAX(90),
+        LONGITUDE_MIN(-180),
+        LONGITUDE_MAX(180),
+        ACCURACY_MIN(0);
 
-		public final int constraint;
+        public final int constraint;
 
-		Constraint(int constraint) {
-			this.constraint = constraint;
-		}
+        Constraint(final int constraint) {
+            this.constraint = constraint;
+        }
 
-		@Override
-		public String toString() {return Integer.toString(constraint);}
-	}
+        @Override
+        public String toString() {return Integer.toString(constraint);}
+    }
 
-	public final double latitude;
-	public final double longitude;
-	public final int accuracy;
-	public final long time; // epoch timestamp
+    public static final double EARTH_RADIUS = 6378.1370;
+    public final double latitude;
+    public final double longitude;
+    public final int accuracy;
+    public final long time; // epoch timestamp
 
-	public Location(double latitude, double longitude, int accuracy) {
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.accuracy = accuracy;
+    public Location(final double latitude, final double longitude, final int accuracy) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.accuracy = accuracy;
         this.time = Calendar.getInstance().getTimeInMillis();
-	}
+    }
 
-	public Location(double latitude, double longitude) {
-		this(latitude, longitude, 0);
-	}
+    public Location(final double latitude, final double longitude) {
+        this(latitude, longitude, 0);
+    }
 
-    public static Location fromJSON(JSONObject jsonObject) {
+    public static Location fromJSON(final JSONObject jsonObject) {
         try {
             if (jsonObject.size() != Key.values().length + 1) throw new Exception("Wrong number of keys");
             if (!(
@@ -73,9 +74,9 @@ public class Location extends Message {
             int accuracy = Message.intFromJson(jsonObject, Key.ACCURACY);
             if (!(
                     latitude >= Constraint.LATITUDE_MIN.constraint &&
-							latitude <= Constraint.LATITUDE_MAX.constraint &&
+                            latitude <= Constraint.LATITUDE_MAX.constraint &&
                     longitude >= Constraint.LONGITUDE_MIN.constraint &&
-							longitude <= Constraint.LONGITUDE_MAX.constraint &&
+                            longitude <= Constraint.LONGITUDE_MAX.constraint &&
                     accuracy >= Constraint.ACCURACY_MIN.constraint
             )) throw new Exception("Values' content is invalid");
 
@@ -87,13 +88,12 @@ public class Location extends Message {
     }
 
     /**
-     * Finds distance in meters between 2 locations
-     * Haversine formula
+     * Finds distance, in meters, between two Locations using the Haversine formula.
      * @param location
      * @return
      */
-    public double distanceBetween(Location location) {
-        double R = 6378.137;
+    @SuppressWarnings("checkstyle:magicnumber") // Maths is happening
+    public double distanceBetween(final Location location) {
         double dLat = (location.latitude - latitude) * Math.PI / 180d;
         double dLong = (location.longitude - longitude) * Math.PI / 180d;
         double a =
@@ -102,24 +102,23 @@ public class Location extends Message {
                 Math.cos(location.latitude * Math.PI / 180d) *
                 Math.sin(dLong/2) * Math.sin(dLong/2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        double d = R * c * 1000;
+        double d = EARTH_RADIUS * c * 1000;
         System.out.println("Locations are " + d + " meters apart.");
         return d;
-
     }
 
-	public double getLatitude() {return latitude;}
+    public double getLatitude() {return latitude;}
 
-	public double getLongitude() {return longitude;}
+    public double getLongitude() {return longitude;}
 
-	public double getAccuracy() {return accuracy;}
+    public double getAccuracy() {return accuracy;}
 
-	/**
-	 * @return standard Java epoch time when the location data was received from the client
-	 */
-	public long getTime() {return time;}
+    /**
+     * @return standard Java epoch time when the location data was received from the client
+     */
+    public long getTime() {return time;}
 
-    public static Location getCentre(List<Location> locationList) {
+    public static Location getCentre(final List<Location> locationList) {
         double sumX = 0;
         double sumY = 0;
         double sumZ = 0;

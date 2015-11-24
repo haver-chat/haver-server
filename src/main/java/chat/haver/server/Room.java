@@ -2,7 +2,11 @@ package chat.haver.server;
 
 import org.java_websocket.WebSocket;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 /**
@@ -11,9 +15,9 @@ import java.util.stream.Collectors;
  */
 public class Room {
 
-	public final static String COMMAND_WHISPER = "whisper"; // TODO Move this command to client side?
+	public static final String COMMAND_WHISPER = "whisper"; // TODO Move this command to client side?
 
-	private final static Random random = new Random();
+	private static final Random RANDOM = new Random();
 	private final String name;
 	private Location centre;
 	private final double radius;
@@ -25,7 +29,7 @@ public class Room {
 	 * @param centre The Location of the centre of the Room.
 	 * @param radius The distance in which a Client can join the Room.
 	 */
-	public Room(String name, Location centre, double radius) {
+	public Room(final String name, final Location centre, final double radius) {
 		if (Main.DEBUG && !(name.length() > 0)) { System.err.println("Room:Room() : Empty Name :^)"); } // TODO: null check and fix error message
 		this.name = name;
 		if (Main.DEBUG && !(centre != null)) { System.err.println("Room:Room() : Centre is null"); } // TODO: null check and fix error message
@@ -34,7 +38,7 @@ public class Room {
 		this.radius = radius; // TODO Change as more people are added?
 	}
 
-	public Room(RoomInfo roomInfo, Location centre) {
+	public Room(final RoomInfo roomInfo, final Location centre) {
 		this(roomInfo.getName(), centre, roomInfo.getRadius());
 	}
 
@@ -44,7 +48,7 @@ public class Room {
 	 * @param conn The WebSocket of the specified Client.
 	 * @param client The Client to be added.
 	 */
-	public void addClient(WebSocket conn, Client client) {
+	public void addClient(final WebSocket conn, final Client client) {
 		clients.put(conn, client);
 		client.setName(generateName()); // After .put to keep thread safe
         centre = recalculateCentre(client.getLocation());
@@ -53,7 +57,7 @@ public class Room {
 		clients.forEach((k, v) -> {
 			if (k != conn) k.send(newClientString);
 		});
-		System.out.println("Added conn ["+conn+"] to room ["+this+"]: <client info request>");
+		System.out.println("Added conn [" + conn + "] to room [" + this + "]: <client info request>");
 	}
 
 	/**
@@ -65,7 +69,7 @@ public class Room {
 			System.err.println("ROOM IS OVER MAXIMUM LIMIT, OH SHIT SON");
 			System.exit(69);
 		}
-		int index = random.nextInt(freeNames.size());
+		int index = RANDOM.nextInt(freeNames.size());
 		String name = freeNames.get(index);
 		freeNames.remove(index);
 		return name;
@@ -76,7 +80,7 @@ public class Room {
 	 *
 	 * @param conn The socket which has been closed.
 	 */
-	public void close(WebSocket conn) {
+	public void close(final WebSocket conn) {
         Client client = clients.get(conn);
 		freeNames.add(client.getName()); // Before .remove to keep thread safe
 		clients.remove(conn);
@@ -89,9 +93,11 @@ public class Room {
 	 *
 	 * @param post The message to be broadcast.
 	 */
+    @SuppressWarnings("checkstyle:finalparameters")
 	public void send(Post post) {
 		if(post.getContent().startsWith("/") &&
 			(post = parseCommand(post)) == null) {return;}
+        // post may now be considered final
 
 		if (post.getTo().size() == 0) {
 			for (WebSocket conn : clients.keySet()) {
@@ -112,7 +118,7 @@ public class Room {
 		}
 	}
 
-	public Post parseCommand(Post post) {
+	public Post parseCommand(final Post post) {
 		String[] splitContent = post.getContent().substring(1).split("\\s");
 		String command = splitContent[0].toLowerCase();
 		String[] args = Arrays.copyOfRange(splitContent, 1, splitContent.length);
@@ -141,7 +147,7 @@ public class Room {
 	 * @param client The Client whose Location is updated.
 	 * @param location The updated Location of the specified Client.
 	 */
-	public void updateLocation(Client client, Location location) {
+	public void updateLocation(final Client client, final Location location) {
 		if (client.isValid()) {
 			//Location oldLocation = client.getLocation();
 			client.setLocation(location);
@@ -158,7 +164,7 @@ public class Room {
 	 *
 	 * @param location The Location of the new Client.
 	 */
-	private Location recalculateCentre(Location location) {
+	private Location recalculateCentre(final Location location) {
         if (centre == null) {
             return location;
         } else {
@@ -181,8 +187,10 @@ public class Room {
 	 * @param updatedLocation The Client's new Location.
 	 */
     @Deprecated
-	private Location recalculateCentre(Location oldLocation, Location updatedLocation) {
+    @SuppressWarnings("checkstyle:finalparameters")
+	private Location recalculateCentre(final Location oldLocation, Location updatedLocation) {
 		updatedLocation = recalculateCentre(updatedLocation);
+        // updatedLocation can now be considered final
 		return new Location(updatedLocation.getLatitude() - (oldLocation.getLatitude() / clients.size()),
 			updatedLocation.getLongitude() - (oldLocation.getLongitude() / clients.size()));
 	}
@@ -193,7 +201,7 @@ public class Room {
 	 * @param location The specified location.
 	 * @return True if the specified location is within the radius of the room.
 	 */
-	public boolean inRange(Location location) {
+	public boolean inRange(final Location location) {
         return centre.distanceBetween(location) <= radius;
 	}
 
@@ -217,7 +225,7 @@ public class Room {
 	 * @param name The name to verify.
 	 * @return True if the name is being used in the room.
 	 */
-	public boolean validName(String name) {
+	public boolean validName(final String name) {
 		for(Client client : clients.values()) {
 			if(client.getName().equals(name)) {return true;}
 		}
@@ -234,7 +242,7 @@ public class Room {
 	 * @param names The names to verify.
 	 * @return True if all the names are being used in the room.
 	 */
-	public boolean validNames(List<String> names) {
+	public boolean validNames(final List<String> names) {
 		for(String name : names) {
 			if(!validName(name)) {return false;}
 		}

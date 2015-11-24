@@ -6,7 +6,6 @@ import org.java_websocket.server.WebSocketServer;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
-import java.lang.Override;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
@@ -18,7 +17,7 @@ import java.util.HashMap;
  */
 public class Router extends WebSocketServer {
 
-	public final static JSONParser parser = new JSONParser();
+	public static final JSONParser PARSER = new JSONParser();
 	private HashMap<WebSocket, Client> clients = new HashMap<>();
 	private HashMap<Client, Room> rooms = new HashMap<>();
 
@@ -26,19 +25,19 @@ public class Router extends WebSocketServer {
 	/**
 	 * @throws UnknownHostException Config dun goof'd.
 	 */
-	public Router(String hostname, int port) throws UnknownHostException {
+	public Router(final String hostname, final int port) throws UnknownHostException {
 		super(new InetSocketAddress(hostname, port));
 	}
 
 	@Override
-	public void onOpen(WebSocket conn, ClientHandshake handshake) {
+	public void onOpen(final WebSocket conn, final ClientHandshake handshake) {
 		Client client = new Client();
 		clients.put(conn, client);
         System.out.println("New connection (" + clients.size() + " connections): " + conn);
 	}
 
 	@Override
-	public void onClose(WebSocket conn, int code, String reason, boolean remote) {
+	public void onClose(final WebSocket conn, final int code, final String reason, final boolean remote) {
 		Client client = clients.get(conn);
 		clients.remove(conn);
         if (rooms.get(client) != null) {
@@ -49,7 +48,7 @@ public class Router extends WebSocketServer {
 	}
 
 	@Override
-	public void onError(WebSocket conn, Exception ex) {
+	public void onError(final WebSocket conn, final Exception ex) {
 		ex.printStackTrace();
 		if (conn != null) {
 			// some errors like port binding failed may not be assignable to a specific websocket
@@ -64,7 +63,7 @@ public class Router extends WebSocketServer {
 	 * @param message The Stringified JSON Message.
 	 */
 	@Override
-	public void onMessage(WebSocket conn, String message) {
+	public void onMessage(final WebSocket conn, final String message) {
 		Client client = clients.get(conn);
 		if (!client.addToQueue()) {
 			System.out.println("Messages too frequent, rate limiting: " + client.getName());
@@ -146,7 +145,7 @@ public class Router extends WebSocketServer {
 	 * @param client The client that needs to be put in a room.
 	 * @param room The room that the client needs to be put in.
 	 */
-	private void setRoom(WebSocket conn, Client client, Room room) {
+	private void setRoom(final WebSocket conn, final Client client, final Room room) {
         if (rooms.get(client) != null) {
             rooms.replace(client, room);
         } else {
@@ -155,7 +154,7 @@ public class Router extends WebSocketServer {
 		room.addClient(conn, client);
 	}
 
-	public Room getRoom(Location location) {
+	public Room getRoom(final Location location) {
 		double closest = Double.MAX_VALUE;
 		Room result = null;
 		for(Room room : rooms.values()) {
@@ -171,10 +170,10 @@ public class Router extends WebSocketServer {
 	}
 
 	/**
-	 * Sends the specified message to every Room
+	 * Sends the specified message to every Room.
 	 * @param post The Post to send
 	 */
-	public void broadcast(Post post) {
+	public void broadcast(final Post post) {
 		for(Room room : rooms.values()) {
 			room.send(post);
 		}

@@ -19,7 +19,7 @@ public abstract class Message {
 
 		public final String key;
 
-		Key(String key) {
+		Key(final String key) {
 			this.key = key;
 		}
 
@@ -35,7 +35,7 @@ public abstract class Message {
 
 		public final int type;
 
-		Type(int type) {
+		Type(final int type) {
 			this.type = type;
 		}
 
@@ -49,7 +49,7 @@ public abstract class Message {
 
 		public final String request;
 
-		Request(String request) {
+		Request(final String request) {
 			this.request = request;
 		}
 
@@ -57,7 +57,7 @@ public abstract class Message {
 		public String toString() {return request;}
 	}
 
-	public static Type typeFromJson(JSONObject message) {
+	public static Type typeFromJson(final JSONObject message) {
         if (message.containsKey(Key.TYPE.key) && message.get(Key.TYPE.key) instanceof Number) {
             int typeNumber = intFromJson(message, Key.TYPE);
             for (Type type : Type.values()) {
@@ -68,9 +68,9 @@ public abstract class Message {
 	}
 
 
-    public static JSONObject jsonFromString(String jsonString) {
+    public static JSONObject jsonFromString(final String jsonString) {
         try {
-            return (JSONObject) Router.parser.parse(jsonString);
+            return (JSONObject) Router.PARSER.parse(jsonString);
         } catch(ParseException e) {
             if (Main.DEBUG) {
                 System.err.println("Message:jsonFromString : Parse Exception");
@@ -85,7 +85,7 @@ public abstract class Message {
 	 * @param names
 	 * @return True if the List is empty or all elements are valid names. False if List is longer than room max size.
 	 */
-	public static boolean validListOfNames(List names) {
+	public static boolean validListOfNames(final List names) {
 		// Correctly allows for an empty array
 		if(names.size() == 0) {return true;} // Empty Lists are safe
 		if(names.size() > Client.NAMES.length) {return false;} // Cannot be larger than room max size
@@ -106,7 +106,7 @@ public abstract class Message {
 	 * @param key The key that maps to a Number in the jsonObject.
 	 * @return The specified value as a double.
 	 */
-    protected static double doubleFromJson(JSONObject jsonObject, JSONKey key) {
+    protected static double doubleFromJson(final JSONObject jsonObject, final JSONKey key) {
 		return ((Number) jsonObject.get(key.toString())).doubleValue();
     }
 
@@ -118,7 +118,7 @@ public abstract class Message {
      * @param key The key that maps to a Number in the jsonObject.
      * @return The specified value as a int.
      */
-    protected static int intFromJson(JSONObject jsonObject, JSONKey key) {
+    protected static int intFromJson(final JSONObject jsonObject, final JSONKey key) {
         return ((Number) jsonObject.get(key.toString())).intValue();
     }
 
@@ -130,7 +130,7 @@ public abstract class Message {
 	 * @param key The key that maps to a String in the jsonObject.
 	 * @return The specified value as a String.
 	 */
-    protected static String stringFromJson(JSONObject jsonObject, JSONKey key) {
+    protected static String stringFromJson(final JSONObject jsonObject, final JSONKey key) {
 		return (String) jsonObject.get(key.toString());
     }
 
@@ -142,7 +142,7 @@ public abstract class Message {
 	 * @param key The key that maps to a List in the jsonObject.
 	 * @return The specified value as a List.
 	 */
-    protected static List listFromJson(JSONObject jsonObject, JSONKey key) {
+    protected static List listFromJson(final JSONObject jsonObject, final JSONKey key) {
         return (List) jsonObject.get(key.toString());
     }
 }
