@@ -4,9 +4,9 @@ version '0.1-SNAPSHOT'
 apply plugin: 'java'
 apply plugin: 'application'
 // apply plugin: 'checkstyle' // TODO: uncomment when finished JDoc comments
-checkstyle {
+/*checkstyle {
     configFile = rootProject.file('haver_checks.xml')
-}
+}*/
 mainClassName = 'chat.haver.server.Main'
 
 sourceCompatibility = 1.8
