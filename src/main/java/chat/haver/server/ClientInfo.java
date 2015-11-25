@@ -30,11 +30,11 @@ public class ClientInfo extends Message {
     /**
      * To be sent to the Client when they join a Room.
      *
-     * @precondition roomName must have a length greater than 0.
-     * @precondition clientName must be a valid name.
-     * @precondition names must not be empty.
-     * @precondition names must contain only valid, unique, names.
-     * @precondition names must not be greater than the max size of a Room.
+     * @haver.precondition roomName must have a length greater than 0.
+     * @haver.precondition clientName must be a valid name.
+     * @haver.precondition names must not be empty.
+     * @haver.precondition names must contain only valid, unique, names.
+     * @haver.precondition names must not be greater than the max size of a Room.
      *
      * @param roomName The name of the Room.
      * @param clientName The name of the Client
@@ -54,11 +54,11 @@ public class ClientInfo extends Message {
     /**
      * To be sent to the Client when they join a Room.
      *
-     * @precondition roomName must have a length greater than 0.
-     * @precondition clientName must be a valid name.
-     * @precondition names must not be empty.
-     * @precondition names must contain only valid, unique, names.
-     * @precondition names must not be greater than the max size of a Room.
+     * @haver.precondition roomName must have a length greater than 0.
+     * @haver.precondition clientName must be a valid name.
+     * @haver.precondition names must not be empty.
+     * @haver.precondition names must contain only valid, unique, names.
+     * @haver.precondition names must not be greater than the max size of a Room.
      *
      * @param roomName The name of the Room.
      * @param clientName The name of the Client
@@ -84,7 +84,7 @@ public class ClientInfo extends Message {
     /**
      * To be sent to a Client when an other Client arrives or departs the Room.
      *
-     * @precondition name must be a valid name.
+     * @haver.precondition name must be a valid name.
      *
      * @param change True if Clients are being added, false otherwise.
      * @param name The name of the Client that is being added/removed.

@@ -101,7 +101,7 @@ public abstract class Message {
 	/**
 	 * Helper method that encapsulates the casting of Numbers from JSONObjects.
 	 *
-	 * @precondition jsonObject must contain key of type Number.
+	 * @haver.precondition jsonObject must contain key of type Number.
 	 * @param jsonObject The entire JSONObject containing the key/value pair to extract and cast.
 	 * @param key The key that maps to a Number in the jsonObject.
 	 * @return The specified value as a double.
@@ -113,7 +113,7 @@ public abstract class Message {
     /**
      * Helper method that encapsulates the casting of Numbers from JSONObjects.
      *
-     * @precondition jsonObject must contain key of type Number.
+     * @haver.precondition jsonObject must contain key of type Number.
      * @param jsonObject The entire JSONObject containing the key/value pair to extract and cast.
      * @param key The key that maps to a Number in the jsonObject.
      * @return The specified value as a int.
@@ -125,7 +125,7 @@ public abstract class Message {
 	/**
 	 * Helper method that encapsulates the casting of Strings from JSONObjects.
 	 *
-	 * @precondition jsonObject must contain key of type String.
+	 * @haver.precondition jsonObject must contain key of type String.
 	 * @param jsonObject The entire JSONObject containing the key/value pair to extract and cast.
 	 * @param key The key that maps to a String in the jsonObject.
 	 * @return The specified value as a String.
@@ -137,7 +137,7 @@ public abstract class Message {
 	/**
 	 * Helper method that encapsulates the casting of Lists from JSONObjects.
 	 *
-	 * @precondition jsonObject must contain key of type List.
+	 * @haver.precondition jsonObject must contain key of type List.
 	 * @param jsonObject The entire JSONObject containing the key/value pair to extract and cast.
 	 * @param key The key that maps to a List in the jsonObject.
 	 * @return The specified value as a List.
