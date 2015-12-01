@@ -172,7 +172,7 @@ public class Room {
                     clients
                             .values()
                             .stream()
-                            .map(c -> c.getLocation())
+                            .map(Client::getLocation)
                             .collect(Collectors.toList())
             );
         }

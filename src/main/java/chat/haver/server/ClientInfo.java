@@ -1,9 +1,12 @@
 package chat.haver.server;
 
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 /**
  * Message to the Client giving information about the Room and other Clients.
@@ -42,13 +45,15 @@ public class ClientInfo extends Message {
      * @param names A List of Client names that are being added/removed.
      * @return Stringified JSON with TYPE_CLIENT_INFO and the specified data.
      */
+    @SuppressWarnings("unchecked")
     public static String toString(final String roomName, final String clientName, final boolean change, final List<String> names) {
-        return "{\"" +
-                Message.Key.TYPE + "\": " + Type.CLIENT_INFO + ", \"" +
-                Key.ROOM_NAME + "\": " + roomName + ", \"" +
-                Key.CLIENT_NAME + "\": " + clientName + ", \"" +
-                Key.CHANGE + "\": " + change + ", \"" +
-                Key.NAMES + "\":" + JSONArray.toJSONString(names) + "}";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put(Message.Key.TYPE, Type.CLIENT_INFO);
+        jsonObject.put(Key.ROOM_NAME, roomName);
+        jsonObject.put(Key.CLIENT_NAME, clientName);
+        jsonObject.put(Key.CHANGE, change);
+        jsonObject.put(Key.NAMES, names);
+        return jsonObject.toJSONString();
     }
 
     /**
@@ -67,18 +72,7 @@ public class ClientInfo extends Message {
      * @return Stringified JSON with TYPE_CLIENT_INFO and the specified data.
      */
     public static String toString(final String roomName, final String clientName, final boolean change, final Collection<Client> clients) {
-        StringBuilder sb = new StringBuilder("{\"" +
-                Message.Key.TYPE + "\": " + Type.CLIENT_INFO + ", \"" +
-                Key.ROOM_NAME + "\": \"" + roomName + "\", \"" +
-                Key.CLIENT_NAME + "\": \"" + clientName + "\", \"" +
-                Key.CHANGE + "\": " + change + ", \"" +
-                Key.NAMES + "\":[\"");
-        for(Client client : clients) {
-            sb.append(client.getName()).append("\", \"");
-        }
-        sb.delete((sb.length() - 1 - 3), (sb.length() - 1));
-        sb.append("]}");
-        return sb.toString();
+        return toString(roomName, clientName, change, clients.stream().map(Client::getName).collect(Collectors.toList()));
     }
 
     /**
