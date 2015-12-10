@@ -8,7 +8,7 @@ after_success:
 - eval "$(ssh-agent -s)"
 - chmod 600 .travis/deploy_key.pem
 - ssh-add .travis/deploy_key.pem
-- git remote add deploy git@haver.chat:haver-server
+- git remote add deploy git@ssh.haver.chat:haver-server
 - git push deploy
 addons:
   ssh_known_hosts: haver.chat
