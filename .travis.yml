@@ -11,4 +11,4 @@ after_success:
 - git remote add deploy git@ssh.haver.chat:haver-server
 - git push deploy
 addons:
-  ssh_known_hosts: haver.chat
+  ssh_known_hosts: ssh.haver.chat
