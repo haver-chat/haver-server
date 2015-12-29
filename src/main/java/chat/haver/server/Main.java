@@ -10,7 +10,6 @@ import java.util.Map;
 public class Main {
     public static final boolean DEBUG = true;
     public static final Map<String, String> CONFIG = new HashMap<>();
-    private static final String CONFIG_FILE = "config.txt";
 
     public enum Environment {
         DEVELOPMENT("development"),
@@ -29,24 +28,21 @@ public class Main {
 
     private Main(){}
 
-    private static Map<String, String> makeConfig() throws IOException {
+    private static void makeConfig(String[] args) {
         CONFIG.put("host", "127.0.0.1");
         CONFIG.put("port", "8080");
         CONFIG.put("env", Environment.DEVELOPMENT.toString());
-        File file = new File(CONFIG_FILE);
-        if (file.exists() && !file.isDirectory()) {
-            BufferedReader r = new BufferedReader(new FileReader(file));
-            String line;
-            while ((line = r.readLine()) != null) {
-                CONFIG.put(line.split(":")[0].trim(), line.split(":")[1].trim());
-            }
+        if (args.length > 1) {
+            CONFIG.put("host", args[0]);
+            CONFIG.put("port", args[1]);
+        } else if (args.length == 1) {
+            CONFIG.put("host", args[0]);
         }
-        return CONFIG;
     }
 
     public static void main(final String[] args) {
         try {
-            makeConfig();
+            makeConfig(args);
             Router router = new Router(CONFIG.get("host"), Integer.valueOf(CONFIG.get("port")));
             router.start();
             System.out.println("Hosting new server on: " + router.getAddress());

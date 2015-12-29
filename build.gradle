@@ -4,7 +4,7 @@ version '0.1-SNAPSHOT'
 apply plugin: 'java'
 //javadoc.enabled = false
 apply plugin: 'application'
-/**apply plugin: 'checkstyle' // TODO: uncomment when finished JDoc comments
+/*apply plugin: 'checkstyle' // TODO: uncomment when finished JDoc comments
 checkstyle {
     toolVersion = '6.12.1'
     configFile = rootProject.file('haver_checks.xml')
@@ -25,4 +25,10 @@ dependencies {
         'org.java-websocket:Java-WebSocket:1.3.0',
         'com.googlecode.json-simple:json-simple:1.1.1'
     )
+}
+
+task runProduction(type: JavaExec) {
+    classpath = sourceSets.main.runtimeClasspath
+    main = 'chat.haver.server.Main'
+    args 'ws.haver.chat', '80'
 }

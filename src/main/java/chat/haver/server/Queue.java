@@ -29,7 +29,7 @@ public class Queue {
      */
     public boolean add() {
         final long now = new Date().getTime();
-        if(isFull()) if (!clear(now)) return false;
+        if(isFull() && !clear(now)) return false;
 
         array[head] = now;
         head = (head + 1) % array.length;

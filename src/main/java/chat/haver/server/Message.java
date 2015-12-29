@@ -74,6 +74,7 @@ public abstract class Message {
         } catch(ParseException e) {
             if (Main.DEBUG) {
                 System.err.println("Message:jsonFromString : Parse Exception");
+                e.printStackTrace();
             }
             return null;
         }
