@@ -30,5 +30,5 @@ dependencies {
 task runProduction(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     main = 'chat.haver.server.Main'
-    args 'ws.haver.chat', '80'
+    args 'ws.haver.chat', '8080'
 }
