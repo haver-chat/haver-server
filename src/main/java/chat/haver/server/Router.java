@@ -36,6 +36,7 @@ public class Router extends WebSocketServer {
         Client client = new Client();
         clients.put(conn, client);
         System.out.println("New connection (" + clients.size() + " connections): " + conn);
+        conn.send(Message.Request.LOCATION.request);
     }
 
     @Override
