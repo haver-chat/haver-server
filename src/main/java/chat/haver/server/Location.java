@@ -94,6 +94,7 @@ public class Location extends Message {
      */
     @SuppressWarnings("checkstyle:magicnumber") // Maths is happening
     public double distanceBetween(final Location location) {
+        // TODO: Clean up
         double dLat = (location.latitude - latitude) * Math.PI / 180d;
         double dLong = (location.longitude - longitude) * Math.PI / 180d;
         double a =

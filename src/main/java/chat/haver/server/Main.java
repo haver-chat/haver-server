@@ -1,11 +1,14 @@
 package chat.haver.server;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.net.UnknownHostException;
 
 public class Main {
-    public static final boolean DEBUG = true;
-    public static final Map<String, String> CONFIG = new HashMap<>();
+    @Deprecated
+    public static final boolean DEBUG = true; // To be removed and replaced with Environment enum
+    public static final Environment ENVIRONMENT = Environment.DEVELOPMENT;
+
+    private static String host = "127.0.0.1";
+    private static int port = 8080;
 
     public enum Environment {
         DEVELOPMENT("development"),
@@ -19,31 +22,42 @@ public class Main {
         }
 
         @Override
-        public String toString() {return env;}
+        public String toString() {
+            return env;
+        }
     }
 
     private Main(){}
 
-    private static void makeConfig(String[] args) {
-        CONFIG.put("host", "127.0.0.1");
-        CONFIG.put("port", "8080");
-        CONFIG.put("env", Environment.DEVELOPMENT.toString());
-        if (args.length > 1) {
-            CONFIG.put("host", args[0]);
-            CONFIG.put("port", args[1]);
-        } else if (args.length == 1) {
-            CONFIG.put("host", args[0]);
+    /**
+     * Parses command line arguments then creates and runs a {@link Router server}.
+     *
+     * @param args Command line arguments.
+     */
+    public static void main(final String[] args) {
+        parseArgs(args);
+        try {
+            Router router = new Router(host, port);
+            router.start();
+            System.out.println("Hosting new server on: " + router.getAddress());
+        } catch (UnknownHostException e) {
+            System.err.println("Invalid host: " + host + ':' + port);
         }
     }
 
-    public static void main(final String[] args) {
-        try {
-            makeConfig(args);
-            Router router = new Router(CONFIG.get("host"), Integer.valueOf(CONFIG.get("port")));
-            router.start();
-            System.out.println("Hosting new server on: " + router.getAddress());
-        } catch (Exception e) {
-            e.printStackTrace();
+    /**
+     * Helper method to parse command line arguments.
+     * Expected: [host] [port]
+     * Unexpected arguments are ignored.
+     *
+     * @param args The command line arguments passed to {@link #main(String[]) main}.
+     */
+    private static void parseArgs(final String[] args) {
+        if(args.length > 0) {
+            host = args[0];
+            if(args.length > 1) {
+                port = Integer.parseInt(args[1]);
+            }
         }
     }
 }

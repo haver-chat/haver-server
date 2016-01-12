@@ -54,6 +54,7 @@ public class Post extends Message {
      * @return Stringified JSON.
      */
     @Override
+    @SuppressWarnings("unchecked")
     public String toString() {
         JSONObject jsonObject = new JSONObject();
         jsonObject.put(Message.Key.TYPE.key, Type.POST.type);
