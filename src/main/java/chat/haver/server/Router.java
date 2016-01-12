@@ -10,6 +10,7 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 // TODO Get token lib
 
@@ -19,7 +20,7 @@ import java.util.HashSet;
 public class Router extends WebSocketServer {
 
     public static final JSONParser PARSER = new JSONParser();
-    private HashMap<WebSocket, Client> clients = new HashMap<>();
+    private ConcurrentHashMap<WebSocket, Client> clients = new ConcurrentHashMap<>();
     private HashMap<Client, Room> rooms = new HashMap<>();
 
 
@@ -35,6 +36,7 @@ public class Router extends WebSocketServer {
         Client client = new Client();
         clients.put(conn, client);
         System.out.println("New connection (" + clients.size() + " connections): " + conn);
+        conn.send(Message.Request.LOCATION.request);
     }
 
     @Override

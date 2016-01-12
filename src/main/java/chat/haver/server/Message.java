@@ -44,7 +44,7 @@ public abstract class Message {
     }
 
     public enum Request {
-        LOCATION("{\"" + Key.TYPE + "\": " + Type.ROOM_INFO + '}'),
+        LOCATION("{\"" + Key.TYPE + "\": " + Type.LOCATION + '}'),
         ROOM_INFO("{\"" + Key.TYPE + "\": " + Type.ROOM_INFO + '}');
 
         public final String request;
@@ -74,6 +74,7 @@ public abstract class Message {
         } catch(ParseException e) {
             if (Main.DEBUG) {
                 System.err.println("Message:jsonFromString : Parse Exception");
+                e.printStackTrace();
             }
             return null;
         }
