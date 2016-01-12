@@ -78,7 +78,7 @@ public class Post extends Message {
      * @param to
      */
     public void setTo(final List<String> to) {
-        if (Main.DEBUG && !(Client.validNames(to))) { System.err.println("Post:setTo() : Names not in list"); } // TODO: null check and fix error message
+        if (Main.DEBUG && !(Client.validNames(to))) System.err.println("Post:setTo() : Names not in list"); // TODO: null check and fix error message
         this.to = to.stream().distinct().collect(Collectors.toList());
     }
 

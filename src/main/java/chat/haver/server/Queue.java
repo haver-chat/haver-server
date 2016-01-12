@@ -29,7 +29,7 @@ public class Queue {
      */
     public boolean add() {
         final long now = new Date().getTime();
-        if(isFull()) if (!clear(now)) return false;
+        if(isFull() && !clear(now)) return false;
 
         array[head] = now;
         head = (head + 1) % array.length;
@@ -63,7 +63,9 @@ public class Queue {
      *
      * @return True if space was made, false otherwise
      */
-    public boolean clear() {return clear(new Date().getTime());}
+    public boolean clear() {
+        return clear(new Date().getTime());
+    }
 
     /**
      * Helper method to 'remove' (set to -1l) a range of elements.
@@ -75,11 +77,13 @@ public class Queue {
     private void remove(final int fromIndex, final int toIndex) {
         for(int i = fromIndex; i > toIndex; i = (i + 1) % array.length) {array[i] = -1L;}
     }
-
+//TODO: I think Sam's right, gimmy all the brackets!!
     /**
      * @return true if the array is empty, false otherwise
      */
-    public boolean isEmpty() {return (head == tail) && (array[tail] == -1L);}
+    public boolean isEmpty() {
+        return (head == tail) && (array[tail] == -1L);
+    }
 
     /**
      * @return true if the array is full, false otherwise

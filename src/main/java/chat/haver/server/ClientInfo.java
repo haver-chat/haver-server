@@ -68,7 +68,7 @@ public class ClientInfo extends Message {
      * @param roomName The name of the Room.
      * @param clientName The name of the Client
      * @param change True if Clients are being added, false otherwise.
-     * @param clients A List of Clients that are being added/removed.
+     * @param clients A Collection of Clients that are being added/removed.
      * @return Stringified JSON with TYPE_CLIENT_INFO and the specified data.
      */
     public static String toString(final String roomName, final String clientName, final boolean change, final Collection<Client> clients) {
