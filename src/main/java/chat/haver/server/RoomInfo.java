@@ -53,7 +53,7 @@ public class RoomInfo extends Message {
 
             return new RoomInfo(name, radius);
         } catch(Exception e) {
-            System.err.println("RoomInfo:fromJSON : " + e.getMessage());
+            Logger.warning(e.getMessage());
             return null;
         }
     }

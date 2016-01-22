@@ -35,7 +35,7 @@ public class Router extends WebSocketServer {
     public void onOpen(final WebSocket conn, final ClientHandshake handshake) {
         Client client = new Client();
         clients.put(conn, client);
-        System.out.println("New connection (" + clients.size() + " connections): " + conn);
+        Logger.info("New connection (" + clients.size() + " connections): " + conn);
         conn.send(Message.Request.LOCATION.request);
     }
 
@@ -47,12 +47,13 @@ public class Router extends WebSocketServer {
             rooms.get(client).close(conn);
             rooms.remove(client);
         }
-        System.out.println("Connection closed(" + clients.size() + " remaining): " + conn);
+        Logger.info("Connection closed(" + clients.size() + " remaining): " + conn);
     }
 
     @Override
     public void onError(final WebSocket conn, final Exception ex) {
-        ex.printStackTrace();
+        Logger.severe("Websocket error: " + ex.getMessage());
+        Logger.printStackTrace(ex);
         if (conn != null) {
             // some errors like port binding failed may not be assignable to a specific websocket
             conn.close();
@@ -69,12 +70,12 @@ public class Router extends WebSocketServer {
     public void onMessage(final WebSocket conn, final String message) {
         Client client = clients.get(conn);
         if (!client.addToQueue()) {
-            System.out.println("Messages too frequent, rate limiting: " + client.getName());
+            Logger.info("Messages too frequent, rate limiting: " + client.getName());
             return;
         }
 
         Room room = rooms.get(client);
-        System.out.println("Message from [" + conn + "]: " + message);
+        Logger.info("Message from [" + conn + "]: " + message);
 
         JSONObject jsonObject = Message.jsonFromString(message);
         if (jsonObject == null) return; // invalid JSON
@@ -100,7 +101,7 @@ public class Router extends WebSocketServer {
                     break;
 
                 default:
-                    System.out.println("Message from ["+conn+"] was invalid");
+                    Logger.info("Message from ["+conn+"] was invalid");
                     // Client dun goof'd
                     break;
             }
@@ -115,7 +116,7 @@ public class Router extends WebSocketServer {
                         setRoom(conn, client, room);
                     } else {
                         conn.send(Message.Request.ROOM_INFO.request);
-                        System.out.println("Message to ["+conn+"]: <room info request>");
+                        Logger.info("Message to ["+conn+"]: <room info request>");
                     }
                     break;
 
@@ -128,14 +129,14 @@ public class Router extends WebSocketServer {
                     } else {
                         // Client dun goof'd
                         conn.send(Message.Request.LOCATION.request);
-                        System.out.println("Invalid room info from ["+conn+"]: <location request>");
+                        Logger.info("Invalid room info from ["+conn+"]: <location request>");
                     }
                     break;
 
                 default:
                     // Client dun goof'd
                     conn.send(Message.Request.LOCATION.request);
-                    System.out.println("Invalid message from ["+conn+"]: <location request>");
+                    Logger.info("Invalid message from ["+conn+"]: <location request>");
                     break;
             }
         }
@@ -160,7 +161,7 @@ public class Router extends WebSocketServer {
     public Room getRoom(final Location location) {
         double closest = Double.MAX_VALUE;
         Room result = null;
-        for(Room room : new HashSet<Room>(rooms.values())) {
+        for(Room room : new HashSet<>(rooms.values())) {
             double distance = room.getCentre().distanceBetween(location);
             if(distance < room.getRadius()) {
                 if(distance < closest) {

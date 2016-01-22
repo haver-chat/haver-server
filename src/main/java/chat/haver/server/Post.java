@@ -45,7 +45,7 @@ public class Post extends Message {
             if (!(content.length() > 0 && validListOfNames(to))) throw new Exception("Values' content is invalid");
             return new Post(client.getName(), content, to); // This is a checked cast because validListOfNames(List) returned true.
         } catch(Exception e) {
-            System.err.println("Post:fromJSON : " + e.getMessage());
+            Logger.warning(e.getMessage());
             return null;
         }
     }
@@ -65,7 +65,7 @@ public class Post extends Message {
     }
 
     public void setFrom(final String from) {
-        // if (Main.DEBUG && !(Client.validName(from))) { System.err.println("Post:setFrom() : Name not valid"); } // Name should always be valid since set by server
+        // if (!Client.validName(from)) Logger.warning("Post:setFrom() : Name not valid"); // Name should always be valid since set by server
         this.from = from;
     }
 
@@ -79,7 +79,7 @@ public class Post extends Message {
      * @param to
      */
     public void setTo(final List<String> to) {
-        if (Main.DEBUG && !(Client.validNames(to))) System.err.println("Post:setTo() : Names not in list"); // TODO: null check and fix error message
+        if (!Client.validNames(to)) Logger.warning("Names not in list"); // TODO: null check and fix error message
         this.to = to.stream().distinct().collect(Collectors.toList());
     }
 

@@ -45,7 +45,7 @@ public class Main {
             router.start();
             Logger.info("Hosting new server on: " + router.getAddress());
         } catch (UnknownHostException e) {
-            Logger.sever("Invalid host: " + host + ':' + port);
+            Logger.severe("Invalid host: " + host + ':' + port);
         }
     }
 

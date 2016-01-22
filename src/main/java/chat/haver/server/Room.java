@@ -30,11 +30,11 @@ public class Room {
      * @param radius The distance in which a Client can join the Room.
      */
     public Room(final String name, final Location centre, final double radius) {
-        if (Main.DEBUG && !(name.length() > 0)) { System.err.println("Room:Room() : Empty Name :^)"); } // TODO: null check and fix error message
+        if (name.length() <= 0) { Logger.warning("Empty Name"); } // TODO: null check and fix error message
         this.name = name;
-        if (Main.DEBUG && !(centre != null)) { System.err.println("Room:Room() : Centre is null"); } // TODO: null check and fix error message
+        if (centre == null) { Logger.warning("Centre is null"); } // TODO: null check and fix error message
         this.centre = centre;
-        if (Main.DEBUG && !(RoomInfo.validRadius(radius))) { System.err.println("Room:Room() : Invalid Radius"); } // TODO: null check and fix error message
+        if (!RoomInfo.validRadius(radius)) { Logger.warning("Invalid Radius"); } // TODO: null check and fix error message
         this.radius = radius; // TODO Change as more people are added?
     }
 
@@ -57,7 +57,7 @@ public class Room {
         clients.forEach((k, v) -> {
             if (k != conn) k.send(newClientString);
         });
-        System.out.println("Added conn [" + conn + "] to room [" + this + "]: <client info request>");
+        Logger.info("Added conn [" + conn + "] to room [" + this + "]: <client info request>");
     }
 
     /**
@@ -66,8 +66,8 @@ public class Room {
      */
     private String generateName() {
         if(freeNames.size() == 0) { // TODO Actually handle this situation somehow
-            System.err.println("ROOM IS OVER MAXIMUM LIMIT, OH SHIT SON");
-            System.exit(69);
+            Logger.severe("ROOM IS OVER MAXIMUM LIMIT, RIP IN KILL");
+            System.exit(-2011);
         }
         int index = RANDOM.nextInt(freeNames.size());
         String name = freeNames.get(index);
@@ -101,15 +101,15 @@ public class Room {
 
         if (post.getTo().size() == 0) {
             for (WebSocket conn : clients.keySet()) {
-                if (Main.DEBUG && !(validNames(post.getTo()) && conn.isOpen())) { System.err.println("Room:send() : Either name not valid or connection closed"); } // TODO: null check and fix error message
+                if (!(validNames(post.getTo()) && conn.isOpen())) Logger.warning("Either name not valid or connection closed"); // TODO: null check and fix error message
                 conn.send(post.toString());
             }
         } else {
             for(String name : post.getTo()) {
                 for(WebSocket conn : clients.keySet()) {
                     Client client = clients.get(conn);
-                    if(client.getName().equals(name) || client.getName().equals(post.getFrom())) {
-                        if (Main.DEBUG && !(validNames(post.getTo()) && conn.isOpen())) { System.err.println("Room:send() : Either name not valid or connection closed (2)"); } // TODO: null check and fix error message
+                    if (client.getName().equals(name) || client.getName().equals(post.getFrom())) {
+                        if (!(validNames(post.getTo()) && conn.isOpen())) Logger.warning("Either name not valid or connection closed (2)"); // TODO: null check and fix error message
                         conn.send(post.toString());
                         break;
                     }

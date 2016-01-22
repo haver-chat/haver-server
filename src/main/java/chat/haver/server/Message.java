@@ -72,10 +72,7 @@ public abstract class Message {
         try {
             return (JSONObject) Router.PARSER.parse(jsonString);
         } catch(ParseException e) {
-            if (Main.DEBUG) {
-                System.err.println("Message:jsonFromString : Parse Exception");
-                e.printStackTrace();
-            }
+            Logger.warning("Parse Exception: " + e.getMessage());
             return null;
         }
     }
