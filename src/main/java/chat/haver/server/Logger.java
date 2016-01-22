@@ -23,7 +23,7 @@ public class Logger {
         Date date = new Date();
         StackTraceElement ste = Thread.currentThread().getStackTrace()[3];
         String[] arr = ste.getClassName().split("\\.");
-        String classDetails = arr[arr.length] + ":" + ste.getMethodName();
+        String classDetails = arr[arr.length - 1] + ":" + ste.getMethodName();
         if (type.equalsIgnoreCase("warning") || type.equalsIgnoreCase("sever")) {
             return "[" + date.toString() + "] " + type.toUpperCase() + " (" + classDetails + ") " + message;
         } else {
