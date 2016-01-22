@@ -27,7 +27,11 @@ public class Main {
         }
     }
 
-    private Main(){}
+    /**
+     * Empty private constructor to prevent creation of Main.
+     */
+    private Main() {
+    }
 
     /**
      * Parses command line arguments then creates and runs a {@link Router server}.
@@ -39,9 +43,9 @@ public class Main {
         try {
             Router router = new Router(host, port);
             router.start();
-            System.out.println("Hosting new server on: " + router.getAddress());
+            Logger.info("Hosting new server on: " + router.getAddress());
         } catch (UnknownHostException e) {
-            System.err.println("Invalid host: " + host + ':' + port);
+            Logger.sever("Invalid host: " + host + ':' + port);
         }
     }
 

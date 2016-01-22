@@ -82,7 +82,7 @@ public class Location extends Message {
 
             return new Location(latitude, longitude, accuracy);
         } catch(Exception e) {
-            System.err.println("Location:fromJSON : " + e.getMessage());
+            Logger.warning(e.getMessage());
             return null;
         }
     }
@@ -104,7 +104,7 @@ public class Location extends Message {
                 Math.sin(dLong/2) * Math.sin(dLong/2);
         double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
         double d = EARTH_RADIUS * c * 1000;
-        System.out.println("Locations are " + d + " meters apart.");
+        Logger.info("Locations are " + d + " meters apart.");
         return d;
     }
 

@@ -50,7 +50,7 @@ public class Client {
     public Object getToken() {return token;}
 
     public void setName(final String name) {
-        if (Main.DEBUG && !(validName(name))) {System.err.println("Client:setName() : Invalid name");} // TODO: null check and fix error message
+        if (!(validName(name))) Logger.warning("Invalid name"); // TODO: null check and fix error message
         this.name = name;
     }
 
