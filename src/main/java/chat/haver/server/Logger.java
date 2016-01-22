@@ -18,6 +18,7 @@ public class Logger {
         for (String line : STRING_WRITER.toString().split("\\r?\\n")) {
             severe(line);
         }
+        STRING_WRITER.flush();
     }
 
     public static void info(String message) {
