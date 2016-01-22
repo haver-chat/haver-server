@@ -54,7 +54,7 @@ public class Queue {
      */
     public boolean add() {
         final long now = System.currentTimeMillis();
-        if(isFull() && !clear(now)) return false;
+        if(isFull() && !clear(now)) {return false;}
 
         array[head] = now;
         head = increment(head);
@@ -100,7 +100,7 @@ public class Queue {
      * @param toIndex the last index to remove
      */
     private void remove(final int fromIndex, final int toIndex) {
-        for(int i = fromIndex; i > toIndex; i = increment(i)) array[i] = EMPTY;
+        for(int i = fromIndex; i > toIndex; i = increment(i)) {array[i] = EMPTY;}
     }
 
     /**

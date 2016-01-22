@@ -94,7 +94,7 @@ public class Location extends Message {
      */
     @SuppressWarnings("checkstyle:magicnumber") // Maths is happening
     public double distanceBetween(final Location location) {
-        // TODO: Clean up
+        // TODO: clean up
         double dLat = (location.latitude - latitude) * Math.PI / 180d;
         double dLong = (location.longitude - longitude) * Math.PI / 180d;
         double a =
@@ -120,6 +120,7 @@ public class Location extends Message {
     public long getTime() {return time;}
 
     public static Location getCentre(final List<Location> locationList) {
+        // TODO: clean up
         double sumX = 0;
         double sumY = 0;
         double sumZ = 0;
