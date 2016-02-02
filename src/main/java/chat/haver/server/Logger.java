@@ -1,72 +1,98 @@
 package chat.haver.server;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.logging.Level;
 
 /**
  * Basic logging class
  */
 public class Logger {
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    private static final StringWriter STRING_WRITER = new StringWriter();
-    private static final PrintWriter PRINT_WRITER = new PrintWriter(STRING_WRITER);
 
-    public static void printStackTrace(Exception e) {
-        e.printStackTrace(PRINT_WRITER);
-        for (String line : STRING_WRITER.toString().split("\\r?\\n")) {
-            severe(line);
+    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+    /**
+     * Logs a {@link Level}.INFO level message.
+     *
+     * @param message to be logged
+     */
+    public static void info(final String message) {
+        out(format(message, Level.INFO));
+    }
+
+    /**
+     * Logs a {@link Level}.WARNING level message.
+     *
+     * @param message to be logged
+     */
+    public static void warning(final String message) {
+        err(format(message, Level.WARNING));
+    }
+
+    /**
+     * Logs a {@link Level}.SEVERE level message.
+     *
+     * @param e the exception to log
+     */
+    public static void severe(final Exception e) {
+        err(format(formatStackTrace(e), Level.SEVERE));
+    }
+
+    /**
+     * Helper method to format a stack trace for logging
+     *
+     * @param e the exception to extract the stack trace from
+     * @return a stack trace formatted identically to {@link Exception#printStackTrace()}
+     */
+    private static String formatStackTrace(final Exception e) {
+        StringBuilder sb = new StringBuilder(e.getClass().getCanonicalName() + ": " + e.getMessage());
+        for(StackTraceElement ste : e.getStackTrace()) {
+            sb.append("\n\tat ").append(ste.toString());
         }
-        STRING_WRITER.flush();
-    }
-
-    public static void info(String message) {
-        out(format(message, "info"));
-    }
-
-    public static void warning(String message) {
-        err(format(message, "warning"));
-    }
-
-    public static void severe(String message) {
-        err(format(message, "severe"));
+        return sb.toString();
     }
 
     /**
      * Formats the message to be printed to log
-     * @param message To be logged
-     * @param type The type of message: info, warning, or severe
-     * @return Formatted message
+     *
+     * @param message to be logged
+     * @param level the logging level
+     * @return formatted message
      */
-    private static String format(String message, String type) {
-        Date date = new Date();
-        StackTraceElement ste = Thread.currentThread().getStackTrace()[3];
-        String[] arr = ste.getClassName().split("\\.");
-        String classDetails = arr[arr.length - 1] + ":" + ste.getMethodName();
-        String dateString = dateFormat.format(date);
-        if (type.equalsIgnoreCase("info")) {
-            return "[" + dateString + "] " + type.toUpperCase() + " " + message;
-        } else {
-            return "[" + dateString + "] " + type.toUpperCase() + " (" + classDetails + ") " + message;
+    private static String format(final String message, final Level level) {
+        return '[' + DATE_FORMAT.format(new Date()) + "] " + level + ' ' + message;
+    }
+
+    /**
+     * Prints to standard out and logs.
+     *
+     * @param message to output
+     */
+    private static void out(final String message) {
+        System.out.println(message);
+        if(Main.ENVIRONMENT == Main.Environment.PRODUCTION) {
+            log(message);
         }
     }
 
     /**
-     * Prints to standard out
-     * TODO: Use ENVIRONMENT to determine whether to print
+     * Prints to standard error and logs.
+     *
      * @param message to output
      */
-    private static void out(String message) {
-        System.out.println(message);
+    private static void err(final String message) {
+        System.err.println(message);
+        if(Main.ENVIRONMENT == Main.Environment.PRODUCTION) {
+            log(message);
+        }
     }
 
     /**
-     * Prints to standard error
-     * TODO: Use ENVIRONMENT to determine whether to print
-     * @param message to output
+     * Helper method to log messages to a logfile.
+     *
+     * @param message to be logged
      */
-    private static void err(String message) {
-        System.err.println(message);
+    private static void log(final String message) {
+        // TODO implement log file
     }
 }

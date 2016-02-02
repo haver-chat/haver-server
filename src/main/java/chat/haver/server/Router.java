@@ -52,8 +52,7 @@ public class Router extends WebSocketServer {
 
     @Override
     public void onError(final WebSocket conn, final Exception ex) {
-        Logger.severe("Websocket error: " + ex.getMessage());
-        Logger.printStackTrace(ex);
+        Logger.severe(ex);
         if (conn != null) {
             // some errors like port binding failed may not be assignable to a specific websocket
             conn.close();

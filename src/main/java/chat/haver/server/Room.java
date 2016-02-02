@@ -66,7 +66,7 @@ public class Room {
      */
     private String generateName() {
         if(freeNames.size() == 0) { // TODO Actually handle this situation somehow
-            Logger.severe("ROOM IS OVER MAXIMUM LIMIT, RIP IN KILL");
+            Logger.severe(new Exception("ROOM IS OVER MAXIMUM LIMIT, RIP IN KILL"));
             System.exit(-2011);
         }
         int index = RANDOM.nextInt(freeNames.size());
